@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>中国及周边三维震源分布（1965–2016，本地主样本）</title>
+  <style>
+    :root {
+      --bg: #0b0614;
+      --bg-panel: #140c1c;
+      --bg-panel-2: #1a1226;
+      --gold: #e8c872;
+      --gold-dim: #c4a35a;
+      --gold-soft: #f3ede0;
+      --line: #3a2a18;
+      --danger: #ffb4a8;
+      --ok: #9be7c4;
+      --muted: #b9ad9a;
+      --banner: #2a1a08;
+      --font: "Noto Sans CJK SC", "Noto Sans SC", "Source Han Sans SC", "Microsoft YaHei", "PingFang SC", "WenQuanYi Micro Hei", "Noto Sans", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--gold-soft);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.55;
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a { color: var(--gold); }
+    header.app-header {
+      flex: 0 0 auto;
+      padding: 14px 20px 10px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, #160c20 0%, var(--bg) 100%);
+    }
+    header h1 {
+      margin: 0 0 6px;
+      font-size: 1.28rem;
+      font-weight: 650;
+      color: var(--gold);
+      letter-spacing: 0.02em;
+    }
+    header .sub {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+    .scale-banner {
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: var(--banner);
+      border: 1px solid var(--gold-dim);
+      color: #ffe9a8;
+      font-weight: 650;
+      font-size: 0.95rem;
+    }
+    .layout {
+      flex: 1 1 auto;
+      display: grid;
+      grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+      min-height: 0;
+    }
+    aside.controls {
+      border-right: 1px solid var(--line);
+      background: var(--bg-panel);
+      padding: 12px 14px 24px;
+      overflow: auto;
+      max-height: none;
+    }
+    .plot-wrap {
+      min-width: 0;
+      min-height: 680px;
+      height: calc(100vh - 150px);
+      background: var(--bg);
+      position: relative;
+    }
+    #plot { width: 100%; height: 100%; }
+    .count-chip {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      z-index: 5;
+      background: rgba(11, 6, 20, 0.86);
+      border: 1px solid var(--gold-dim);
+      color: var(--gold);
+      padding: 6px 10px;
+      font-weight: 650;
+      pointer-events: none;
+    }
+    h2.sec {
+      margin: 16px 0 8px;
+      font-size: 0.86rem;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+      text-transform: none;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 4px;
+    }
+    h2.sec:first-child { margin-top: 0; }
+    label.row, .row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 6px 0;
+    }
+    label.row span.lab, .lab {
+      flex: 1 1 auto;
+    }
+    .range-vals {
+      color: var(--gold);
+      font-variant-numeric: tabular-nums;
+      font-size: 0.9rem;
+    }
+    input[type="range"] { width: 100%; accent-color: var(--gold); }
+    input[type="checkbox"] { accent-color: var(--gold); width: 16px; height: 16px; }
+    .pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    button {
+      font-family: inherit;
+      font-size: 0.92rem;
+      background: var(--bg-panel-2);
+      color: var(--gold-soft);
+      border: 1px solid var(--gold-dim);
+      padding: 7px 10px;
+      cursor: pointer;
+      border-radius: 2px;
+    }
+    button:hover { background: #241830; color: var(--gold); }
+    button.active {
+      background: #3a2a08;
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+    }
+    .btn-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .note, footer.notes {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+    .note { margin: 4px 0 8px; }
+    footer.notes {
+      flex: 0 0 auto;
+      padding: 16px 20px 28px;
+      border-top: 1px solid var(--line);
+      background: #0e0816;
+    }
+    footer.notes h2 {
+      color: var(--gold);
+      font-size: 1rem;
+      margin: 18px 0 8px;
+    }
+    footer.notes h2:first-child { margin-top: 0; }
+    footer.notes ul { margin: 0 0 8px; padding-left: 1.2em; }
+    footer.notes li { margin: 4px 0; }
+    .empty-msg {
+      display: none;
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 4;
+      background: rgba(11, 6, 20, 0.9);
+      border: 1px solid var(--gold-dim);
+      padding: 12px 16px;
+      color: var(--danger);
+      text-align: center;
+      pointer-events: none;
+    }
+    .empty-msg.show { display: block; }
+    @media (max-width: 960px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      aside.controls {
+        border-right: none;
+        border-bottom: 1px solid var(--line);
+        max-height: none;
+      }
+      .plot-wrap {
+        height: 74vh;
+        min-height: 560px;
+      }
+    }
+  </style>
+  <script>__PLOTLY_JS__</script>
+</head>
+<body>
+  <header class="app-header">
+    <h1>中国及周边三维震源分布</h1>
+    <p class="sub">本地主样本 · 1965–2016 年 · 按坐标选取 70–145°E、10–60°N（不按国家代码筛选）· 真实震源深度向下延伸</p>
+    <div id="scale-banner" class="scale-banner" role="status"></div>
+  </header>
+
+  <div class="layout">
+    <aside class="controls" aria-label="筛选与图层控制">
+      <h2 class="sec">视角</h2>
+      <div class="btn-row">
+        <button type="button" id="btn-top">俯视</button>
+        <button type="button" id="btn-side">侧视</button>
+        <button type="button" id="btn-reset-cam">复位</button>
+      </div>
+      <div class="btn-row-2">
+        <button type="button" id="btn-scale-1" class="active">水平垂直 1:1</button>
+        <button type="button" id="btn-scale-5">深度夸大 5 倍</button>
+      </div>
+      <p class="note">切换夸大时，坐标轴仍标注真实深度（公里）。复位只恢复默认视角，不会改动筛选、图层或比例。</p>
+
+      <h2 class="sec">年份</h2>
+      <div class="pair">
+        <label>起 <input type="range" id="year-min" min="1965" max="2016" step="1"></label>
+        <label>止 <input type="range" id="year-max" min="1965" max="2016" step="1"></label>
+      </div>
+      <div class="range-vals" id="year-label"></div>
+
+      <h2 class="sec">震级</h2>
+      <div class="pair">
+        <label>起 <input type="range" id="mag-min" min="55" max="91" step="1"></label>
+        <label>止 <input type="range" id="mag-max" min="55" max="91" step="1"></label>
+      </div>
+      <div class="range-vals" id="mag-label"></div>
+      <p class="note">滑块以 0.1 级步进。范围按本图样本实际最小、最大震级设定。</p>
+
+      <h2 class="sec">深度分级（可组合）</h2>
+      <label class="row"><input type="checkbox" id="cls-shallow" checked> <span class="lab">浅源 &lt; 70 km</span></label>
+      <label class="row"><input type="checkbox" id="cls-intermediate" checked> <span class="lab">中源 70–300 km（含 300）</span></label>
+      <label class="row"><input type="checkbox" id="cls-deep" checked> <span class="lab">深源 &gt; 300 km</span></label>
+      <div class="btn-row-2">
+        <button type="button" id="btn-reset-filter">重置筛选</button>
+      </div>
+
+      <h2 class="sec">地表图层（均在深度 0）</h2>
+      <label class="row"><input type="checkbox" id="ly-coast" checked> <span class="lab">海岸线（Natural Earth 50m）</span></label>
+      <label class="row"><input type="checkbox" id="ly-border" checked> <span class="lab">国界（Natural Earth 50m）</span></label>
+      <label class="row"><input type="checkbox" id="ly-plate" checked> <span class="lab">PB2002 板块边界</span></label>
+      <label class="row"><input type="checkbox" id="ly-block-l1" checked> <span class="lab">中国一级活动地块边界</span></label>
+      <label class="row"><input type="checkbox" id="ly-block-l1d" checked> <span class="lab">中国一级地块推断边界</span></label>
+      <label class="row"><input type="checkbox" id="ly-block-l2" checked> <span class="lab">中国二级活动地块边界</span></label>
+      <label class="row"><input type="checkbox" id="ly-fault"> <span class="lab">中国活动断层（默认关闭）</span></label>
+      <p class="note">地块与断层只画边界线，不填充为面。PB2002 板块与中国活动地块是不同层级的划分，不能互相替代。</p>
+    </aside>
+
+    <div class="plot-wrap">
+      <div id="count-chip" class="count-chip"></div>
+      <div id="empty-msg" class="empty-msg">当前筛选没有事件。地图与坐标轴仍可操作，可调整筛选条件。</div>
+      <div id="plot"></div>
+    </div>
+  </div>
+
+  <footer class="notes">
+    <h2>使用说明</h2>
+    <ul>
+      <li>在图中拖动可旋转，滚轮缩放，Shift+拖动可平移（以浏览器中 Plotly 3D 的实际交互为准）。</li>
+      <li>点的大小表示震级，颜色表示深度；色标范围固定，筛选不会改变同一深度的颜色。</li>
+      <li>悬停显示目录日期、目录 Time 字段原文、经纬度、深度、震级和 PB2002 板块归属。源数据中 <code>Date_parsed</code> 绝大多数为 UTC 午夜，本图不把日期与时间拼成未经证实的精确发震时刻。</li>
+      <li>本文件已内嵌全部数据与脚本，可用 <code>file://</code> 离线打开，不需要网络、地图密钥或外部字体。中文显示依赖本机已安装的中文字体（如 Noto Sans CJK SC、微软雅黑、苹方）。三维图需要浏览器支持 WebGL。</li>
+    </ul>
+    <h2>数据来源</h2>
+    <ul>
+      <li>地震：项目本地主样本（精细清洗后的构造地震，1965–2016，震级约 5.5–9.1）。未混入 USGS 目录或中国官方目录。</li>
+      <li>板块边界与板块归属底图：Bird (2003) PB2002（Bird, P., 2003, An updated digital model of plate boundaries, G-Cubed）。</li>
+      <li>海岸线与国界：Natural Earth 50m，公有领域。</li>
+      <li>中国活动地块与断层：GMT 中文社区 china-geospatial-data v0.4.0（https://github.com/gmt-china/china-geospatial-data）。一级、推断一级与二级地块均为边界线；断层仅供显示。</li>
+    </ul>
+    <h2>科学限制</h2>
+    <ul>
+      <li>水平坐标采用球面方位等距投影（Azimuthal Equidistant），地球半径 6371 km，投影中心 107.5°E、35°N，单位为公里。自投影中心出发的距离在球面上是准确的；离开中心越远，面积、方位和横距畸变越大。本区跨约 75° 经度、50° 纬度，边缘畸变不可忽略，不能把图上任意两点的直尺距离都当成精确大地线长。</li>
+      <li>默认水平与垂直使用同一物理比例（1 km = 1 km）。深度夸大 5 倍时，只拉伸显示比例，轴向刻度仍是真实深度；请始终查看顶部比例说明，避免把夸大后的倾斜结构误认为真实倾角。</li>
+      <li>深度轴向下为深。地表图层画在 z = 0，断层线不是地下断层面。中国活动地块边界不是闭合行政区，也未当作面域填充。</li>
+      <li>范围按经纬度矩形裁切，包含中国及周边构造区，因此会纳入日本、菲律宾等地的事件；这与按 <code>Country==CN</code> 得到的 358 条不是同一口径。</li>
+      <li>缺失深度的事件不进入本图；疑似重复记录按既有约定保留。板块归属沿用既有立体图的算法：点在 PB2002 多边形内则归该板块，落在边界或缝隙则归最近板块（距离在经纬度平面上计算，不是大地线）。</li>
+      <li>地图线仅作显示，使用了抽稀容差，没有改写原始文件。定位请以源坐标为准。</li>
+    </ul>
+    <p id="build-meta" class="note"></p>
+  </footer>
+
+  <script>
+  __FILTER_JS__
+  </script>
+  <script>
+  const DATA = __DATA_JSON__;
+  const E = DATA.events;
+  const FONT = 'Noto Sans CJK SC, Noto Sans SC, Source Han Sans SC, Microsoft YaHei, PingFang SC, WenQuanYi Micro Hei, Noto Sans, sans-serif';
+  const CAM_DEFAULT = { eye: {x: 1.45, y: -1.7, z: 0.95}, center: {x: 0, y: 0, z: -0.05}, up: {x: 0, y: 0, z: 1} };
+  const CAM_TOP = { eye: {x: 0, y: 0, z: 2.3}, center: {x: 0, y: 0, z: 0}, up: {x: 0, y: 1, z: 0} };
+  const CAM_SIDE = { eye: {x: 0.05, y: -2.3, z: 0.12}, center: {x: 0, y: 0, z: -0.05}, up: {x: 0, y: 0, z: 1} };
+
+  const yearMinEl = document.getElementById('year-min');
+  const yearMaxEl = document.getElementById('year-max');
+  const magMinEl = document.getElementById('mag-min');
+  const magMaxEl = document.getElementById('mag-max');
+  const cls = {
+    shallow: document.getElementById('cls-shallow'),
+    intermediate: document.getElementById('cls-intermediate'),
+    deep: document.getElementById('cls-deep'),
+  };
+  const layerIds = {
+    coast: 'ly-coast',
+    border: 'ly-border',
+    plate: 'ly-plate',
+    block_l1: 'ly-block-l1',
+    block_l1d: 'ly-block-l1d',
+    block_l2: 'ly-block-l2',
+    fault: 'ly-fault',
+  };
+
+  let vertExag = 1;
+  const TRACE = { events: 0 };
+
+  function magFromSlider(v) { return Number(v) / 10; }
+  function sliderFromMag(m) { return Math.round(m * 10); }
+
+  function currentFilters() {
+    var y0 = Number(yearMinEl.value), y1 = Number(yearMaxEl.value);
+    if (y0 > y1) { var t = y0; y0 = y1; y1 = t; }
+    var m0 = magFromSlider(magMinEl.value), m1 = magFromSlider(magMaxEl.value);
+    if (m0 > m1) { var u = m0; m0 = m1; m1 = u; }
+    return {
+      yearMin: y0,
+      yearMax: y1,
+      magMin: m0,
+      magMax: m1,
+      classes: {
+        shallow: cls.shallow.checked,
+        intermediate: cls.intermediate.checked,
+        deep: cls.deep.checked,
+      },
+    };
+  }
+
+  function syncFilterLabels() {
+    var f = currentFilters();
+    document.getElementById('year-label').textContent = f.yearMin + '–' + f.yearMax + ' 年';
+    document.getElementById('mag-label').textContent = 'M ' + f.magMin.toFixed(1) + '–' + f.magMax.toFixed(1);
+  }
+
+  function scaleText() {
+    if (vertExag === 1) {
+      return '当前垂直比例：水平与深度同物理比例（1 km = 1 km）。轴标注为真实深度。';
+    }
+    return '当前垂直比例：深度方向夸大 ' + vertExag + ' 倍（仅拉伸显示，轴标注仍为真实深度，单位 km）。请勿把图上视倾角当作真实倾角。';
+  }
+
+  function aspectFor(exag) {
+    var a = DATA.scene.aspect_1;
+    return { x: a.x, y: a.y, z: a.z * exag };
+  }
+
+  function hoverCustom(sub) {
+    var n = sub.n;
+    var out = new Array(n);
+    for (var i = 0; i < n; i++) {
+      out[i] = [sub.date[i], sub.time[i], sub.lon[i], sub.lat[i], sub.depth[i], sub.mag[i], sub.plate[i]];
+    }
+    return out;
+  }
+
+  function eventStyle(sub) {
+    return {
+      x: [sub.x],
+      y: [sub.y],
+      z: [sub.z],
+      marker: [{
+        size: HypocenterFilter.markerSizes(sub.mag, DATA.marker_size),
+        color: sub.depth,
+        cmin: DATA.scene.cmin,
+        cmax: DATA.scene.cmax,
+        colorscale: DATA.scene.colorscale,
+        colorbar: {
+          title: { text: '深度（km）', font: { family: FONT, color: '#f3ede0', size: 12 } },
+          tickfont: { family: FONT, color: '#f3ede0', size: 11 },
+          bgcolor: 'rgba(11,6,20,0.7)',
+          outlinecolor: '#c4a35a',
+        },
+        opacity: 0.85,
+        line: { width: 0 },
+        sizemode: 'diameter',
+        sizemin: 3,
+        reversescale: false,
+      }],
+      customdata: [hoverCustom(sub)],
+    };
+  }
+
+  function lineTrace(layer, color, width, dash, visible) {
+    return {
+      type: 'scatter3d',
+      name: layer.title,
+      x: layer.x,
+      y: layer.y,
+      z: layer.z,
+      mode: 'lines',
+      hoverinfo: 'skip',
+      showlegend: false,
+      visible: visible,
+      line: { color: color, width: width, dash: dash || 'solid' },
+    };
+  }
+
+  function axisCommon() {
+    return {
+      backgroundcolor: '#0b0614',
+      gridcolor: 'rgba(196,163,90,0.28)',
+      zerolinecolor: 'rgba(232,200,114,0.55)',
+      showbackground: true,
+      color: '#f3ede0',
+      tickfont: { family: FONT, size: 11, color: '#f3ede0' },
+      title: { font: { family: FONT, size: 13, color: '#e8c872' } },
+    };
+  }
+
+  function layoutOf() {
+    var ax = axisCommon();
+    var zTicks = DATA.scene.z_tickvals;
+    var zText = DATA.scene.z_ticktext;
+    return {
+      paper_bgcolor: '#0b0614',
+      plot_bgcolor: '#0b0614',
+      font: { family: FONT, color: '#f3ede0' },
+      margin: { l: 0, r: 0, t: 8, b: 0 },
+      uirevision: 'hypocenter-keep-ui',
+      showlegend: false,
+      scene: {
+        bgcolor: '#0b0614',
+        aspectmode: 'manual',
+        aspectratio: aspectFor(vertExag),
+        xaxis: Object.assign({}, ax, {
+          title: { text: '东向 x（km）', font: ax.title.font },
+          range: DATA.scene.xrange,
+        }),
+        yaxis: Object.assign({}, ax, {
+          title: { text: '北向 y（km）', font: ax.title.font },
+          range: DATA.scene.yrange,
+        }),
+        zaxis: Object.assign({}, ax, {
+          title: { text: '深度（km，向下）', font: ax.title.font },
+          range: DATA.scene.zrange,
+          tickvals: zTicks,
+          ticktext: zText,
+        }),
+        camera: CAM_DEFAULT,
+        dragmode: 'orbit',
+      },
+    };
+  }
+
+  function initPlot() {
+    var layers = DATA.layers;
+    var sub = HypocenterFilter.subset(E, currentFilters());
+    var ev = {
+      type: 'scatter3d',
+      name: '震源',
+      mode: 'markers',
+      hovertemplate:
+        '日期：%{customdata[0]}（目录日期）<br>' +
+        '时间：%{customdata[1]}（目录 Time 原文）<br>' +
+        '经度：%{customdata[2]:.3f}°<br>' +
+        '纬度：%{customdata[3]:.3f}°<br>' +
+        '深度：%{customdata[4]:.1f} km<br>' +
+        '震级：M %{customdata[5]:.2f}<br>' +
+        'PB2002 板块：%{customdata[6]}' +
+        '<extra></extra>',
+    };
+    var style = eventStyle(sub);
+    ev.x = style.x[0]; ev.y = style.y[0]; ev.z = style.z[0];
+    ev.marker = style.marker[0];
+    ev.customdata = style.customdata[0];
+
+    var traces = [ev];
+    TRACE.events = 0;
+    var layerOrder = [];
+    function addLayer(key, color, width, dash, defaultOn) {
+      var ly = layers[key];
+      if (!ly) return;
+      traces.push(lineTrace(ly, color, width, dash, defaultOn));
+      layerOrder.push({ key: key, index: traces.length - 1 });
+    }
+    addLayer('coast', '#f0d78c', 3, 'solid', true);
+    addLayer('border', '#c4a35a', 2, 'solid', true);
+    addLayer('plate', '#ffc14d', 3, 'solid', true);
+    addLayer('block_l1', '#e8b86d', 3, 'solid', true);
+    addLayer('block_l1d', '#e8b86d', 2, 'dash', true);
+    addLayer('block_l2', '#c9a36a', 2, 'solid', true);
+    addLayer('fault', '#b8a078', 1.5, 'solid', false);
+    TRACE.layers = layerOrder;
+
+    var config = {
+      responsive: true,
+      displaylogo: false,
+      displayModeBar: true,
+      showLink: false,
+      showSendToCloud: false,
+      modeBarButtonsToRemove: ['sendDataToCloud', 'resetCameraLastSave3d'],
+      locale: 'zh-CN',
+    };
+    Plotly.newPlot('plot', traces, layoutOf(), config).then(updateCountChip);
+    bindLayerToggles();
+  }
+
+  function updateCountChip() {
+    var f = currentFilters();
+    var n = HypocenterFilter.filterIndices(E, f).length;
+    var total = E.year.length;
+    document.getElementById('count-chip').textContent = '当前显示：' + n.toLocaleString('zh-CN') + ' / ' + total.toLocaleString('zh-CN') + ' 条';
+    document.getElementById('empty-msg').classList.toggle('show', n === 0);
+  }
+
+  function applyFilters() {
+    syncFilterLabels();
+    var sub = HypocenterFilter.subset(E, currentFilters());
+    if (sub.n === 0) {
+      Plotly.restyle('plot', {
+        x: [[]], y: [[]], z: [[]],
+        'marker.size': [[]],
+        'marker.color': [[]],
+        customdata: [[]],
+      }, [TRACE.events]);
+    } else {
+      Plotly.restyle('plot', eventStyle(sub), [TRACE.events]);
+    }
+    updateCountChip();
+  }
+
+  function setCamera(cam) {
+    Plotly.relayout('plot', { 'scene.camera': cam });
+  }
+
+  function setExag(exag) {
+    vertExag = exag;
+    document.getElementById('btn-scale-1').classList.toggle('active', exag === 1);
+    document.getElementById('btn-scale-5').classList.toggle('active', exag === 5);
+    document.getElementById('scale-banner').textContent = scaleText();
+    Plotly.relayout('plot', {
+      'scene.aspectmode': 'manual',
+      'scene.aspectratio': aspectFor(exag),
+    });
+  }
+
+  function bindLayerToggles() {
+    TRACE.layers.forEach(function (item) {
+      var el = document.getElementById(layerIds[item.key]);
+      if (!el) return;
+      el.addEventListener('change', function () {
+        Plotly.restyle('plot', { visible: el.checked }, [item.index]);
+      });
+    });
+  }
+
+  function resetFilters() {
+    yearMinEl.value = DATA.filters.year_min;
+    yearMaxEl.value = DATA.filters.year_max;
+    magMinEl.value = sliderFromMag(DATA.filters.mag_min);
+    magMaxEl.value = sliderFromMag(DATA.filters.mag_max);
+    cls.shallow.checked = true;
+    cls.intermediate.checked = true;
+    cls.deep.checked = true;
+    applyFilters();
+  }
+
+  function setupControls() {
+    yearMinEl.min = yearMaxEl.min = DATA.filters.year_min;
+    yearMinEl.max = yearMaxEl.max = DATA.filters.year_max;
+    yearMinEl.value = DATA.filters.year_min;
+    yearMaxEl.value = DATA.filters.year_max;
+    var sMin = sliderFromMag(DATA.filters.mag_min);
+    var sMax = sliderFromMag(DATA.filters.mag_max);
+    magMinEl.min = magMaxEl.min = sMin;
+    magMinEl.max = magMaxEl.max = sMax;
+    magMinEl.value = sMin;
+    magMaxEl.value = sMax;
+    ['year-min','year-max','mag-min','mag-max'].forEach(function (id) {
+      document.getElementById(id).addEventListener('input', applyFilters);
+    });
+    Object.keys(cls).forEach(function (k) {
+      cls[k].addEventListener('change', applyFilters);
+    });
+    document.getElementById('btn-top').addEventListener('click', function () { setCamera(CAM_TOP); });
+    document.getElementById('btn-side').addEventListener('click', function () { setCamera(CAM_SIDE); });
+    document.getElementById('btn-reset-cam').addEventListener('click', function () { setCamera(CAM_DEFAULT); });
+    document.getElementById('btn-scale-1').addEventListener('click', function () { setExag(1); });
+    document.getElementById('btn-scale-5').addEventListener('click', function () { setExag(5); });
+    document.getElementById('btn-reset-filter').addEventListener('click', resetFilters);
+    document.getElementById('scale-banner').textContent = scaleText();
+    syncFilterLabels();
+    var meta = DATA.meta || {};
+    document.getElementById('build-meta').textContent =
+      '本图事件 ' + (meta.n_plotted || '') + ' 条；主样本 ' + (meta.n_main_sample || '') +
+      ' 条；生成信息见同目录 README。投影：球面方位等距，中心 107.5°E、35°N，R = 6371 km。';
+  }
+
+  setupControls();
+  initPlot();
+  window.addEventListener('resize', function () {
+    var el = document.getElementById('plot');
+    if (el && window.Plotly) Plotly.Plots.resize(el);
+  });
+  </script>
+</body>
+</html>

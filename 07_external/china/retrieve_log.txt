@@ -1,0 +1,45 @@
+[2026-11-16 12:41:57 CST] Initialized retrieve_log.txt for /workspace/07_external/china/
+[2026-11-16 12:41:57 CST] Start 中国地震台网正式地震目录 public HTML query collection
+[2026-11-16 12:41:57 CST] User-Agent: BNBU-DS2043-earthquake-external-collection/1.0 (academic course project; educational use)
+[2026-11-16 12:41:57 CST] Query: PAGEID=earthquake_zhengshi minM=5.5 maxM=10 begtime=2009-01-01 endtime=2026-11-16 (date-only endtime; site expands to 23:59:59)
+[2026-11-16 12:41:57 CST] Timezone: official column is 发震日期（北京时间）; values kept as-is, not converted
+[2026-11-16 12:41:57 CST] Method: public DISPLAY_TYPE=1 HTML query pages, 20 rows/page; Excel/bulk export is login-walled and was not used
+[2026-11-16 12:41:57 CST] GET page 1 (no pagination params) https://data.earthquake.cn/datashare/report.shtml?DISPLAY_TYPE=1&PAGEID=earthquake_zhengshi&minM=5.5&maxM=10&location=&locationselect=&begtime=2009-01-01&endtime=2026-11-16&minLat=-90.0&maxLat=90.0&minLon=-180.0&maxLon=180.0&minDepths=0&maxDepths=1000
+[2026-11-16 12:42:04 CST] Page 1 ok: total=7324 per_page=20 page_count=367 header=['序号', '发震日期（北京时间）', '经度(°)', '纬度(°)', '震源深度(Km)', '震级类型', '震级', '震中位置', '事件类型'] first_row=['1', '2025-11-29 14:05:00', '156.16', '-6.50', '157', 'mB', '5.5', '所罗门群岛', '天然地震']
+[2026-11-16 12:42:06 CST] Page 2/367 ok rows_on_page=20 cumulative=40 first=['21', '2025-11-09 19:13:49', '159.15', '51.72', '47', 'Ms', '5.5', '堪察加东海岸近海', '天然地震']
+[2026-11-16 12:43:17 CST] Page 25/367 ok rows_on_page=20 cumulative=500 first=['481', '2024-7-08 04:01:11', '138.70', '26.85', '540', 'mB', '6.2', '小笠原群岛地区', '天然地震']
+[2026-11-16 12:44:31 CST] Page 50/367 ok rows_on_page=20 cumulative=1000 first=['981', '2022-11-21 23:09:28', '-168.80', '52.67', '6', 'Ms', '5.9', '福克斯群岛', '天然地震']
+[2026-11-16 12:45:47 CST] Page 75/367 ok rows_on_page=20 cumulative=1500 first=['1481', '2021-9-06 01:51:42', '-174.25', '-22.00', '10', 'Ms', '6.3', '汤加地区', '天然地震']
+[2026-11-16 12:47:06 CST] Page 100/367 ok rows_on_page=20 cumulative=2000 first=['1981', '2020-9-19 05:43:58', '-26.90', '0.90', '10', 'Ms', '6.9', '中大西洋中部海岭', '天然地震']
+[2026-11-16 12:48:20 CST] Page 125/367 ok rows_on_page=20 cumulative=2500 first=['2481', '2019-6-16 06:54:59', '-178.06', '-30.94', '20', 'Ms', '7.3', '克马德克群岛地区', '天然地震']
+[2026-11-16 12:49:40 CST] Page 150/367 ok rows_on_page=20 cumulative=3000 first=['2981', '2018-4-07 13:48:38', '142.56', '-5.78', '10', 'Ms', '5.9', '新几内亚', '天然地震']
+[2026-11-16 12:51:14 CST] Page 175/367 ok rows_on_page=20 cumulative=3500 first=['3481', '2016-11-26 15:21:41', '177.19', '-39.09', '16', 'mB', '5.9', '新西兰北岛', '天然地震']
+[2026-11-16 12:52:39 CST] Page 200/367 ok rows_on_page=20 cumulative=4000 first=['3981', '2015-9-17 13:44:39', '-72.10', '-31.80', '10', 'Ms', '5.8', '中智利海岸远海', '天然地震']
+[2026-11-16 12:53:58 CST] Page 225/367 ok rows_on_page=20 cumulative=4500 first=['4481', '2014-7-31 00:00:57', '155.00', '-7.20', '5', 'Ms', '5.6', '所罗门群岛', '天然地震']
+[2026-11-16 12:55:01 CST] WARN fetch attempt 1/4 failed: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')); sleep 1.5s
+[2026-11-16 12:55:21 CST] Page 250/367 ok rows_on_page=20 cumulative=5000 first=['4981', '2013-7-06 13:05:05', '100.55', '-3.20', '30', 'Ms', '6.5', '苏门答腊南部', '天然地震']
+[2026-11-16 12:56:47 CST] Page 275/367 ok rows_on_page=20 cumulative=5500 first=['5481', '2012-4-29 23:02:15', '142.26', '39.77', '11', 'Ms', '5.5', '本州岛', '天然地震']
+[2026-11-16 12:58:11 CST] Page 300/367 ok rows_on_page=20 cumulative=6000 first=['5981', '2011-4-15 10:06:25', '-173.13', '-15.26', '7', 'Ms', '5.6', '汤加', '天然地震']
+[2026-11-16 12:59:29 CST] Page 325/367 ok rows_on_page=20 cumulative=6500 first=['6481', '2010-9-04 16:51:59', '-173.37', '-16.94', '43', 'Ms', '5.6', '汤加', '天然地震']
+[2026-11-16 13:01:02 CST] Page 350/367 ok rows_on_page=20 cumulative=7000 first=['6981', '2009-10-13 04:59:35', '166.68', '-13.96', '33', 'Ms', '5.5', '瓦努阿图(新赫布里底)', '天然地震']
+[2026-11-16 13:02:04 CST] Page 367/367 ok rows_on_page=4 cumulative=7324 first=['7321', '2009-1-03 04:14:31', '-27.10', '0.80', '10', 'Ms', '5.5', '中大西洋中部海岭', '天然地震']
+[2026-11-16 13:02:04 CST] Fetched 7324 data rows from 367 pages (declared total=7324)
+[2026-11-16 13:02:04 CST] Wrote /workspace/07_external/china/catalogs/07_cenc_zhengshi_m55_2009_latest.csv bytes=589134 sha256=61820116e0375d0a721086fa1c51900f703c36857922ef6b0be97347d7696dd2 rows=7324 cols=9
+[2026-11-16 13:02:04 CST] Time range as given (北京时间): 2009-1-01 14:27:51 .. 2025-9-30 21:59:42
+[2026-11-16 13:02:04 CST] File-order first origin time: 2025-11-29 14:05:00; last: 2009-1-01 14:27:51
+[2026-11-16 13:02:04 CST] Magnitude range (numeric 震级 column only): 5.5 .. 8.8 (n_numeric=7324)
+[2026-11-16 13:02:04 CST] 事件类型: {'天然地震': 7324}
+[2026-11-16 13:02:04 CST] 震级类型: {'mB': 1234, 'Ms': 6003, 'mb': 55, 'ML': 4, 'Mw': 26, 'Ms7': 2}
+[2026-11-16 13:02:04 CST] 序号 first=1 last=7324
+[2026-11-16 13:02:04 CST] Finished formal catalog HTML query collection
+[2026-11-16 13:04:53 CST] === Additional notes recorded after catalog fetch (events occurred earlier the same morning) ===
+[2026-11-16 12:35:47 CST] Downloaded GitHub release v0.4.0 UTF-8 pack https://github.com/gmt-china/china-geospatial-data/releases/download/v0.4.0/china-geospatial-data-UTF8.zip -> /workspace/07_external/china/china-geospatial-data-UTF8.zip bytes=22930612 sha256=4262a3348c32b36af06a6dcf7d86eeb339b5a5ed58564d16dd14892182b958f6
+[2026-11-16 12:35:47 CST] User-Agent for GitHub and data.earthquake.cn: BNBU-DS2043-earthquake-external-collection/1.0 (academic course project; educational use)
+[2026-11-16 12:35 CST] Extracted needed files only: blocks/CN-block-L1.gmt, CN-block-L1-deduced.gmt, CN-block-L2.gmt; faults/CN-faults.gmt; github/README.md, README-en.md, Changelog.md. Did not extract CN-border or geo3al into this tree; they remain inside the official zip.
+[2026-11-16 12:35:54 CST] GET https://data.earthquake.cn/datashare/report.shtml?PAGEID=datasourcelist&dt=40280d0453e414e40153e44861dd0002 HTTP 200 (dataset landing page for 国家地震台网地震目录; 在线下载 link present)
+[2026-11-16 12:37:00 CST] GET https://data.earthquake.cn/datashare/report.shtml?PAGEID=resourcedownload&dtid=40280d0453e414e40153e44861dd0002 -> HTTP 302 Location: http://data.earthquake.cn/datashare/login.jsp  (official bulk download requires login; not followed beyond recording the redirect; no account created)
+[2026-11-16 12:36:56 CST] GET https://data.earthquake.cn/datashare/report.shtml?PAGEID=resourcedirect&dtid=40280d0453e414e40153e44861dd0002&orgid=a370b883-f16d-4c1d-ba06-4f78a96a98bc&dataLevel=datatwo HTTP 200 HTML order/user flow (links to PAGEID=userup, datashareajax.do?method=orderCheck; visible text includes 验证码已发送). dataLevel=datatwo. Stopped; no login, no order, no captcha bypass.
+[2026-11-16 12:38 CST] Public query pages earthquake_zhengshi and earthquake_csn are viewable without login. On-page 数据下载 / Excel export (DISPLAY_TYPE=3 / textdownload) checks username+userid cookies and otherwise redirects to login.jsp. Excel export was not used.
+[2026-11-16 12:39 CST] Probe (not collected): PAGEID=earthquake_csn minM=5.5 maxM=10 begtime=1970-01-01 endtime=2017-08-31 returned catalog_RECORDCOUNT=24853, 1243 pages of 20, official times labeled 发震时刻(国际时)/GMT. This is the frozen CSN catalog, not the monthly-updated 国家地震台网地震目录. Not downloaded.
+[2026-11-16 12:39 CST] Formal catalog probe: 2026-01-01..2026-11-16 M>=5.5 returned 无数据; latest available origin time on page 1 of 2009-01-01..2026-11-16 was 2025-11-29 14:05:00 北京时间.
+[2026-11-16 13:04:53 CST] Catalog CSV validated: 7324 rows, 序号 1..7324 contiguous, 9 official columns, sha256 unchanged. Parsed 北京时间 range 2009-01-01 14:27:51 .. 2025-11-29 14:05:00 (official strings may use unpadded months). All 事件类型=天然地震. One official depth value is "-". String min/max in the earlier log line is unreliable because months are often unpadded; use the parsed range.

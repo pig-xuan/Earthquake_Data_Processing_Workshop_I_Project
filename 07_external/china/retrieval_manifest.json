@@ -1,0 +1,77 @@
+{
+  "retrieval_cst": "2026-11-16 12:35:47 CST through 2026-11-16 13:02:04 CST (UTC+8, Asia/Shanghai)",
+  "retrieval_utc_start": "2026-11-16T04:35:47Z",
+  "retrieval_utc_end": "2026-11-16T05:02:04Z",
+  "user_agent": "BNBU-DS2043-earthquake-external-collection/1.0 (academic course project; educational use)",
+  "output_root": "/workspace/07_external/china",
+  "files": {
+    "SOURCES.md": {
+      "bytes": 16114,
+      "sha256": "8e029a76b42210305575f33f7bff2bf0e4fc9f7efa8fd5fe385ab720ddc6ac4b"
+    },
+    "blocks/CN-block-L1-deduced.gmt": {
+      "bytes": 4547,
+      "sha256": "2b363ded86fe6dad7511bdef7651fe814b90cea2361fa4c51c2c7c30fcb85151"
+    },
+    "blocks/CN-block-L1.gmt": {
+      "bytes": 8957,
+      "sha256": "30d7fabbea95040fed596a37dfd07970c6e7699187c27ad064471db25ef5d5cd"
+    },
+    "blocks/CN-block-L2.gmt": {
+      "bytes": 19215,
+      "sha256": "189b81655411225ad3d7a1860829835ad23b843c239134529bbad9f2d8d98c33"
+    },
+    "catalogs/07_cenc_zhengshi_m55_2009_latest.csv": {
+      "bytes": 589134,
+      "sha256": "61820116e0375d0a721086fa1c51900f703c36857922ef6b0be97347d7696dd2"
+    },
+    "china-geospatial-data-UTF8.zip": {
+      "bytes": 22930612,
+      "sha256": "4262a3348c32b36af06a6dcf7d86eeb339b5a5ed58564d16dd14892182b958f6"
+    },
+    "faults/CN-faults.gmt": {
+      "bytes": 7927992,
+      "sha256": "7f5871f4af76a8f3cdc9c4190956fc7c33469ed4d05bb103ff68214f51ee7ea8"
+    },
+    "github/Changelog.md": {
+      "bytes": 503,
+      "sha256": "c382a65cb3ae6160dadfc38452fd082d1c914505e4c59a9ccc23e0c845ebad39"
+    },
+    "github/README-en.md": {
+      "bytes": 1921,
+      "sha256": "cc423ddf133f0cdcb37c9d3edfe5c67e5c663ea75d437ed3ab138aaff728571f"
+    },
+    "github/README.md": {
+      "bytes": 1817,
+      "sha256": "e936e5a07adb7ccc71f3f4310267181b9a1d6c1f16c5b8cd7db81e80458d82cf"
+    },
+    "retrieve_china_catalogs.py": {
+      "bytes": 10968,
+      "sha256": "1ff1397df25f6893f0a84067978f307ad229d4a01ffd9bf48287922ddc476257"
+    },
+    "retrieve_log.txt": {
+      "bytes": 8475,
+      "sha256": "dffdd4763b3f923a5158da0c073b903f1a39ef9c0f595cf359675c637161871e"
+    }
+  },
+  "notes": [
+    "Raw collection only: no cleaning, row filtering, geocoding, visualization, modeling, or timezone conversion.",
+    "Did not overwrite any existing files under /workspace/07_external/catalogs, /impact, /context, or /nbs.",
+    "Priority catalog 国家地震台网地震目录 official download (PAGEID=resourcedownload, dtid=40280d0453e414e40153e44861dd0002) returned HTTP 302 to login.jsp; stopped, no account created.",
+    "Optional formal catalog 中国地震台网正式地震目录 collected via public DISPLAY_TYPE=1 HTML query pagination (20 rows/page, 367 pages) because Excel/bulk export is login-walled. Official origin times are 北京时间 and were kept as-is.",
+    "Formal catalog query: minM=5.5, maxM=10, begtime=2009-01-01, endtime=2026-11-16, global lat/lon/depth. Declared and written rows: 7324. Latest official time: 2025-11-29 14:05:00 Beijing time; no 2026 rows.",
+    "CSN catalog PAGEID=earthquake_csn was probed (24853 rows M>=5.5, 1970-01-01 to 2017-08-31, times labeled 国际时/GMT) but not collected.",
+    "GitHub gmt-china/china-geospatial-data v0.4.0 china-geospatial-data-UTF8.zip kept in full; extracted only CN-block, CN-faults, and README/Changelog. Community GMT data, not CEA official GIS.",
+    "CN-faults is a community OGR/GMT conversion based on CAFDv2023; official CAFD agreement dataset was not requested."
+  ],
+  "failures": [
+    {
+      "item": "国家地震台网地震目录 official bulk download",
+      "dataset_page": "https://data.earthquake.cn/datashare/report.shtml?PAGEID=datasourcelist&dt=40280d0453e414e40153e44861dd0002",
+      "blocked_url": "https://data.earthquake.cn/datashare/report.shtml?PAGEID=resourcedownload&dtid=40280d0453e414e40153e44861dd0002",
+      "observed": "HTTP 302 Location: http://data.earthquake.cn/datashare/login.jsp at 2026-11-16 12:37:00 CST",
+      "related_url": "https://data.earthquake.cn/datashare/report.shtml?PAGEID=resourcedirect&dtid=40280d0453e414e40153e44861dd0002&orgid=a370b883-f16d-4c1d-ba06-4f78a96a98bc&dataLevel=datatwo",
+      "action": "Stopped this item. No login, registration, or access-control bypass."
+    }
+  ]
+}

@@ -53,6 +53,7 @@ USGS 只作对照和延伸，不与本地目录简单拼接：
 
 在精细清洗结果上做样本界定和时空格局，新开笔记本，不覆盖旧的升级图。
 
+- [`interactive/`](07_analysis/interactive/)：中国及周边离线三维震源图。请下载 [`07_china_region_hypocenter_3d.html`](07_analysis/interactive/07_china_region_hypocenter_3d.html) 到本地后用浏览器打开；GitHub 文件页不是运行预览。Plotly 已内嵌。范围是 1965–2016、70–145°E / 10–60°N，3515 个事件；真实深度向下，水平垂直 1:1 与深度夸大 5 倍可切换。
 - `07_earthquake_analysis_sample.ipynb`：样本界定与质量清点
 - `07_earthquake_analysis_sample.csv`：本地主样本（23,232 条）
 - `07_analysis_sample_quality.csv`：清点表
@@ -71,6 +72,7 @@ USGS 只作对照和延伸，不与本地目录简单拼接：
 - `impact/`：NOAA NCEI 显著地震与海啸目录
 - `context/`：板块边界（PB2002）、GEM 全球活动断层、Global CMT 震源机制
 - `nbs/`：国家统计局年鉴「地震灾害情况」、分省人口和地区生产总值，以及环境统计资料中的地震灾害表。尚未转录成分析表。
+- `china/`：中国优先补充，位于 `07_external/china/`。含中国地震台网正式目录（2009 年起）、CN-block 地块与 CN-faults 活动断层；国家地震台网整包目录因需登录未收入。说明见 `07_external/china/SOURCES.md`。
 
 ### mapdata/
 
@@ -84,6 +86,8 @@ USGS 只作对照和延伸，不与本地目录简单拼接：
 python -m pip install -r requirements.txt
 python earthquake_cleaning.py
 ```
+
+组内原有练习脚本 `earthquake_cleaning.py` 的 19 步说明，是队友当时写在根 README 里的原文，现原样保存在 [`docs/earthquake_cleaning_19_steps.md`](docs/earthquake_cleaning_19_steps.md)。那份文档只描述该清洗脚本当时的范围；其中列出的未做事项不等于整个项目的当前进度。
 
 精细清洗与分析笔记本在 `07_fine_clean/` 和 `07_analysis/` 中，需额外安装 `geopandas`、`matplotlib`、`seaborn`、`pyproj`。地图基于 Natural Earth 50m，立体图使用 matplotlib 的三维坐标。读取 `Date_parsed` 时请使用：
 

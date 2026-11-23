@@ -1,0 +1,170 @@
+{
+  "built_at": "2026-11-23 09:45（北京时间，Asia/Shanghai，UTC+8）",
+  "stats": {
+    "lon_min": 70.0,
+    "lon_max": 145.0,
+    "lat_min": 10.0,
+    "lat_max": 60.0,
+    "n_valid_coords_global": 23232,
+    "n_outside_region": 19717,
+    "n_region_coord": 3515,
+    "n_region_missing_depth_excluded": 0,
+    "n_region_used": 3515,
+    "n_region_possible_duplicate_kept": 6,
+    "n_shallow": 2870,
+    "n_intermediate": 464,
+    "n_deep": 181,
+    "mag_min": 5.5,
+    "mag_max": 9.1,
+    "depth_min": 0.7,
+    "depth_max": 664.0,
+    "year_min": 1965,
+    "year_max": 2016,
+    "n_in_china_flag_in_region": 358,
+    "sample_path": "/workspace/07_analysis/07_earthquake_analysis_sample.csv",
+    "sample_sha256": "d95ebc7066e66ab05010371c848001401eb54547dd4c23f7d8fd039c7361a124",
+    "sample_bytes": 3787995,
+    "n_main_sample": 23232,
+    "n_date_parse_fail": 0,
+    "n_coord_invalid": 0,
+    "n_global_missing_depth": 3,
+    "n_global_depth_negative_flag": 3,
+    "n_global_possible_duplicate": 98,
+    "date_min": "1965-01-02 00:00:00+00:00",
+    "date_max": "2016-12-30 00:00:00+00:00",
+    "n_date_parsed_midnight_utc": 23229
+  },
+  "assign_stats": {
+    "n_region": 3515,
+    "n_within": 3515,
+    "n_nearest": 0,
+    "n_unassigned": 0,
+    "global": {
+      "n_assigned_input": 23232,
+      "n_within": 23232,
+      "n_nearest": 0,
+      "n_unassigned": 0,
+      "assign_rule": "点落在 PB2002 板块多边形内则归该板块；在边界上或缝隙中则归最近板块（距离在经纬度平面上计算，与既有立体图 sjoin_nearest 一致，不是大地线距离）。",
+      "compare_existing_counts": {
+        "compared": true,
+        "counts_csv": "/workspace/07_analysis/07_st_3d_plate_counts.csv",
+        "n_mismatch_plates": 0,
+        "mismatches": [],
+        "sum_new": 23232,
+        "sum_prev": 23232
+      }
+    }
+  },
+  "layer_stats": {
+    "coast": {
+      "n_segments_in": 1422,
+      "n_segments_out": 151,
+      "n_vertices_in": 60669,
+      "n_vertices_out": 2160,
+      "simplify_tol_km": 4.0,
+      "densify_deg": 0.5,
+      "note": "抽稀与裁切仅用于显示，未改写原始文件。",
+      "source": "/workspace/dpw1_report/mapdata/ne_50m_land/ne_50m_land.shp",
+      "title": "海岸线"
+    },
+    "border": {
+      "n_segments_in": 1632,
+      "n_segments_out": 190,
+      "n_vertices_in": 99613,
+      "n_vertices_out": 4646,
+      "simplify_tol_km": 4.0,
+      "densify_deg": 0.5,
+      "note": "抽稀与裁切仅用于显示，未改写原始文件。",
+      "source": "/workspace/dpw1_report/mapdata/ne_50m_admin_0_countries/ne_50m_admin_0_countries.shp",
+      "title": "国界"
+    },
+    "plate": {
+      "n_segments_in": 241,
+      "n_segments_out": 36,
+      "n_vertices_in": 6292,
+      "n_vertices_out": 381,
+      "simplify_tol_km": 2.0,
+      "densify_deg": 0.5,
+      "note": "抽稀与裁切仅用于显示，未改写原始文件。",
+      "source": "/workspace/dpw1_report/mapdata/PB2002_boundaries.json",
+      "title": "PB2002 板块边界"
+    },
+    "block_l1": {
+      "n_segments_in": 8,
+      "n_segments_out": 8,
+      "n_vertices_in": 501,
+      "n_vertices_out": 415,
+      "simplify_tol_km": 1.0,
+      "densify_deg": 0.5,
+      "note": "抽稀与裁切仅用于显示，未改写原始文件。",
+      "source": "/workspace/07_external/china/blocks/CN-block-L1.gmt",
+      "title": "中国一级活动地块边界"
+    },
+    "block_l1d": {
+      "n_segments_in": 10,
+      "n_segments_out": 9,
+      "n_vertices_in": 259,
+      "n_vertices_out": 211,
+      "simplify_tol_km": 1.0,
+      "densify_deg": 0.5,
+      "note": "抽稀与裁切仅用于显示，未改写原始文件。",
+      "source": "/workspace/07_external/china/blocks/CN-block-L1-deduced.gmt",
+      "title": "中国一级地块推断边界"
+    },
+    "block_l2": {
+      "n_segments_in": 25,
+      "n_segments_out": 25,
+      "n_vertices_in": 961,
+      "n_vertices_out": 809,
+      "simplify_tol_km": 1.0,
+      "densify_deg": 0.5,
+      "note": "抽稀与裁切仅用于显示，未改写原始文件。",
+      "source": "/workspace/07_external/china/blocks/CN-block-L2.gmt",
+      "title": "中国二级活动地块边界"
+    },
+    "fault": {
+      "n_segments_in": 10534,
+      "n_segments_out": 10565,
+      "n_vertices_in": 213015,
+      "n_vertices_out": 24363,
+      "simplify_tol_km": 2.5,
+      "densify_deg": 0.5,
+      "note": "抽稀与裁切仅用于显示，未改写原始文件。",
+      "source": "/workspace/07_external/china/faults/CN-faults.gmt",
+      "title": "中国活动断层"
+    }
+  },
+  "scene": {
+    "xrange": [
+      -4098.725,
+      4385.053
+    ],
+    "yrange": [
+      -2959.115,
+      3385.089
+    ],
+    "zrange": [
+      -697.2,
+      33.2
+    ],
+    "xspan_km": 8483.777,
+    "yspan_km": 6344.204,
+    "zspan_km": 730.4,
+    "aspect_1": {
+      "x": 1.0,
+      "y": 0.747804,
+      "z": 0.086094
+    },
+    "cmin": 0.0,
+    "cmax": 664.0,
+    "projection": {
+      "name": "azimuthal equidistant (spherical)",
+      "lon0": 107.5,
+      "lat0": 35.0,
+      "R_km": 6371.0,
+      "units": "km"
+    }
+  },
+  "sample_sha256": "d95ebc7066e66ab05010371c848001401eb54547dd4c23f7d8fd039c7361a124",
+  "n_plotted": 3515
+}
