@@ -2,17 +2,16 @@
 
 DS 2043 Data Processing Workshop I · 2026 Fall · 选题 07
 
-项目以 1965–2016 年的 USGS 地震目录为输入，完成数据清洗、国家和中国省级区域匹配、海域分类、K-means 聚类及制图。课程 B 部分的 Notebook、扩展目录和提交材料见 [B 部分提交与复现说明](reports/part-b/B部分_提交说明.md)。
+项目以 1965–2016 年的 USGS 地震目录为输入，完成数据清洗、国家和中国省级区域匹配、海域分类、K-means 聚类及制图。课程 B 部分的 Notebook、扩展目录和提交材料见 [B 部分提交与复现说明](2.country%20match/part-b/B部分_提交说明.md)。
 
 ## 目录结构
 
 | 目录 | 内容 |
 | --- | --- |
-| [`data/`](data/) | 课程原始数据 `07earthquake.csv` 以及 Natural Earth 边界文件 |
-| [`scripts/`](scripts/) | 清洗、地理匹配、聚类和绘图脚本 |
-| [`results/tables/`](results/tables/) | 清洗后的目录、地理匹配、海域统计和聚类结果 |
-| [`results/figures/`](results/figures/) | 全球和中国震中分布图、深度分组图及聚类图 |
-| [`reports/part-b/`](reports/part-b/) | B 部分提交包、文件清单、复现说明和结果分析 |
+| [`1.datacleaning/`](1.datacleaning/) | 清洗脚本、原始目录 `07earthquake.csv` 和清洗后的 `earthquake_only.csv` |
+| [`2.country match/`](2.country%20match/) | 国家、省份和海域匹配脚本，匹配结果 CSV，以及绘图共用的国家和省界文件。B 部分提交材料在 `part-b/` |
+| [`3.plot/`](3.plot/) | 全球和中国地图脚本、全球底图数据，以及两套震中分布图和深度分组图 |
+| [`4. k_means/`](4.%20k_means/) | K-means 聚类和绘图脚本、聚类结果 CSV、全球聚类分布和年度计数图 |
 
 ## 安装与运行
 
@@ -26,17 +25,24 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 ```
 
-下面的顺序可以从原始 CSV 重新生成全部结果。脚本使用相对于仓库的输入和输出路径，因此也可以在其他目录用脚本的绝对路径执行。绘图脚本直接保存 PNG。
+下面的顺序可以从原始 CSV 重新生成全部结果。脚本使用相对于仓库的输入和输出路径，因此也可以在其他目录用脚本的绝对路径执行。各脚本将结果写入各自所在的阶段目录。阶段之间直接读取上游 CSV 或共用边界文件。
 
 ```bash
-python scripts/clean_earthquakes.py
-python scripts/match_countries.py
-python scripts/match_china_provinces.py
-python scripts/match_oceans.py
-python scripts/cluster_earthquakes.py
-python scripts/plot_world.py
-python scripts/plot_china.py
-python scripts/plot_clusters.py
+# 1. Data cleaning
+python "1.datacleaning/clean_earthquakes.py"
+
+# 2. Country, province and ocean matching
+python "2.country match/match_countries.py"
+python "2.country match/match_china_provinces.py"
+python "2.country match/match_oceans.py"
+
+# 3. Earthquake maps
+python "3.plot/plot_world.py"
+python "3.plot/plot_china.py"
+
+# 4. K-means clustering and visualization
+python "4. k_means/cluster_earthquakes.py"
+python "4. k_means/plot_clusters.py"
 ```
 
 | 脚本 | 生成文件或用途 |
@@ -70,6 +76,6 @@ python scripts/plot_clusters.py
 
 ## 结果预览
 
-![1965–2016 年全球地震震中分布](results/figures/global_earthquake_distribution.png)
+![1965–2016 年全球地震震中分布](3.plot/global_earthquake_distribution.png)
 
-[中国地震深度分组图](results/figures/china_earthquake_depth_panels.png) · [全球 K-means 聚类图](results/figures/earthquake_kmeans_visualization.png) · [海域统计表](results/tables/earthquake_ocean_summary.csv)
+[中国地震深度分组图](3.plot/china_earthquake_depth_panels.png) · [全球 K-means 聚类图](4.%20k_means/earthquake_kmeans_visualization.png) · [海域统计表](2.country%20match/earthquake_ocean_summary.csv)

@@ -1,13 +1,17 @@
+from pathlib import Path
+
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import pandas as pd
 from shapely.affinity import translate
 
 
-from paths import COUNTRY_BOUNDARIES, FIGURES_DIR, TABLES_DIR
+STAGE_DIR = Path(__file__).resolve().parent
+BOUNDARIES_DIR = STAGE_DIR.parent / "2.country match" / "boundaries"
+COUNTRY_BOUNDARIES = BOUNDARIES_DIR / "ne_50m_admin_0_countries.zip"
 
 # Plot only records that received a cluster assignment.
-quakes = pd.read_csv(TABLES_DIR / "earthquake_kmeans.csv")
+quakes = pd.read_csv(STAGE_DIR / "earthquake_kmeans.csv")
 quakes = quakes.dropna(subset=["Cluster"]).copy()
 quakes["Cluster"] = quakes["Cluster"].astype(int)
 
@@ -86,8 +90,7 @@ ax_year.set_ylabel("Earthquake count", color=muted)
 ax_year.set_axisbelow(True)
 ax_year.grid(axis="y", color=grid, linewidth=0.6)
 
-FIGURES_DIR.mkdir(parents=True, exist_ok=True)
-output_file = FIGURES_DIR / "earthquake_kmeans_visualization.png"
+output_file = STAGE_DIR / "earthquake_kmeans_visualization.png"
 fig.savefig(output_file, dpi=200, facecolor=background)
 plt.close(fig)
 

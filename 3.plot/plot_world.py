@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import cartopy
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -5,12 +7,12 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 
 
-from paths import BOUNDARIES_DIR, FIGURES_DIR, TABLES_DIR
+STAGE_DIR = Path(__file__).resolve().parent
+CLEANED_DATA = STAGE_DIR.parent / "1.datacleaning" / "earthquake_only.csv"
 
 
-cartopy.config["pre_existing_data_dir"] = BOUNDARIES_DIR
-FIGURES_DIR.mkdir(parents=True, exist_ok=True)
-data_path = TABLES_DIR / "earthquake_only.csv"
+cartopy.config["pre_existing_data_dir"] = STAGE_DIR / "boundaries"
+data_path = CLEANED_DATA
 
 quakes = pd.read_csv(data_path)
 
@@ -150,7 +152,7 @@ fig.subplots_adjust(
     bottom=0.14
 )
 
-output_path = FIGURES_DIR / "global_earthquake_distribution.png"
+output_path = STAGE_DIR / "global_earthquake_distribution.png"
 
 fig.savefig(
     output_path,
@@ -313,7 +315,7 @@ comparison_fig.text(
 )
 
 
-comparison_output_path = FIGURES_DIR / "global_earthquake_depth_panels.png"
+comparison_output_path = STAGE_DIR / "global_earthquake_depth_panels.png"
 comparison_fig.savefig(
     comparison_output_path,
     dpi=300,

@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import cartopy.crs as ccrs
 import geopandas as gpd
 import matplotlib.pyplot as plt
@@ -5,7 +7,11 @@ from matplotlib.lines import Line2D
 import pandas as pd
 
 
-from paths import COUNTRY_BOUNDARIES, FIGURES_DIR, PROVINCE_BOUNDARIES, TABLES_DIR
+STAGE_DIR = Path(__file__).resolve().parent
+MATCH_DIR = STAGE_DIR.parent / "2.country match"
+BOUNDARIES_DIR = MATCH_DIR / "boundaries"
+COUNTRY_BOUNDARIES = BOUNDARIES_DIR / "ne_50m_admin_0_countries.zip"
+PROVINCE_BOUNDARIES = BOUNDARIES_DIR / "ne_10m_admin_1_states_provinces.zip"
 
 
 EXTENT = [70, 139, 15, 56]
@@ -57,7 +63,7 @@ def plot_epicenters(ax, records, color, layer, size):
 
 
 def main():
-    quakes = pd.read_csv(TABLES_DIR / "earthquake_china_province.csv")
+    quakes = pd.read_csv(MATCH_DIR / "earthquake_china_province.csv")
     countries = gpd.read_file(COUNTRY_BOUNDARIES).to_crs("EPSG:4326")
     countries = countries.cx[EXTENT[0]:EXTENT[1], EXTENT[2]:EXTENT[3]]
     provinces = gpd.read_file(PROVINCE_BOUNDARIES).to_crs("EPSG:4326")
@@ -99,8 +105,7 @@ def main():
         ncol=3, frameon=False, labelcolor=TEXT, fontsize=11,
     )
     fig.text(0.5, 0.027, CREDIT, ha="center", color=MUTED, fontsize=9)
-    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
-    output_path = FIGURES_DIR / "china_earthquake_distribution.png"
+    output_path = STAGE_DIR / "china_earthquake_distribution.png"
     fig.savefig(output_path, dpi=300, facecolor=BACKGROUND)
     print("Saved combined map:", output_path)
 
@@ -132,7 +137,7 @@ def main():
         ncol=3, frameon=False, labelcolor=TEXT, fontsize=11,
     )
     panel_fig.text(0.5, 0.028, CREDIT, ha="center", color=MUTED, fontsize=9)
-    panel_path = FIGURES_DIR / "china_earthquake_depth_panels.png"
+    panel_path = STAGE_DIR / "china_earthquake_depth_panels.png"
     panel_fig.savefig(panel_path, dpi=300, facecolor=BACKGROUND)
     print("Saved four-panel map:", panel_path)
     plt.close(fig)

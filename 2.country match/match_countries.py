@@ -1,11 +1,16 @@
+from pathlib import Path
+
 import pandas as pd
 import geopandas as gpd
 
-from paths import COUNTRY_BOUNDARIES, TABLES_DIR
+
+STAGE_DIR = Path(__file__).resolve().parent
+CLEANED_DATA = STAGE_DIR.parent / "1.datacleaning" / "earthquake_only.csv"
+COUNTRY_BOUNDARIES = STAGE_DIR / "boundaries" / "ne_50m_admin_0_countries.zip"
 
 
 countries = gpd.read_file(COUNTRY_BOUNDARIES)
-earthquake_only = pd.read_csv(TABLES_DIR / "earthquake_only.csv")
+earthquake_only = pd.read_csv(CLEANED_DATA)
 
 print("First five records:")
 print(countries.head())
@@ -63,4 +68,4 @@ earthquake_country = quakes_with_country.rename(columns ={"ADMIN" : "country", "
 earthquake_country["country_matched_status"] = "unmatched"
 earthquake_country.loc[matched_mask, "country_matched_status"] = "matched"
 export_data = earthquake_country.drop(columns= ["geometry", "index_right"])
-export_data.to_csv(TABLES_DIR / "earthquake_country.csv", index=False)
+export_data.to_csv(STAGE_DIR / "earthquake_country.csv", index=False)

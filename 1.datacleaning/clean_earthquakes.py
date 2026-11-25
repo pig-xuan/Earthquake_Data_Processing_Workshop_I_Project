@@ -1,9 +1,12 @@
 import argparse
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-from paths import RAW_DATA, TABLES_DIR
+
+STAGE_DIR = Path(__file__).resolve().parent
+RAW_DATA = STAGE_DIR / "07earthquake.csv"
 
 
 # Return the mean, median, extrema and quartiles in the order used below.
@@ -310,8 +313,7 @@ def main():
 
     # Keep the original row index so exported records can be traced to the source.
     earthquake_only["source_row"] = earthquake_only.index
-    output_file = TABLES_DIR / "earthquake_only.csv"
-    TABLES_DIR.mkdir(parents=True, exist_ok=True)
+    output_file = STAGE_DIR / "earthquake_only.csv"
     earthquake_only.to_csv(output_file, index=False)
     print(f"Exported file: {output_file}")
     print("Exported rows:", len(earthquake_only))

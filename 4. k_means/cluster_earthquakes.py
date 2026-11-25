@@ -1,7 +1,11 @@
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 
-from paths import TABLES_DIR
+
+STAGE_DIR = Path(__file__).resolve().parent
+CLEANED_DATA = STAGE_DIR.parent / "1.datacleaning" / "earthquake_only.csv"
 
 
 class KMeans:
@@ -79,7 +83,7 @@ def to_sphere(longitude, latitude):
 
 
 def main():
-    earthquakes = pd.read_csv(TABLES_DIR / "earthquake_only.csv")
+    earthquakes = pd.read_csv(CLEANED_DATA)
 
     longitude = pd.to_numeric(earthquakes["Longitude"], errors="coerce")
     latitude = pd.to_numeric(earthquakes["Latitude"], errors="coerce")
@@ -107,7 +111,7 @@ def main():
     print("\nAnnual counts by cluster, 2010 to 2012:")
     print(annual_counts.loc[2010:2012])
 
-    output_file = TABLES_DIR / "earthquake_kmeans.csv"
+    output_file = STAGE_DIR / "earthquake_kmeans.csv"
     earthquakes.to_csv(output_file, index=False)
     print(f"\nSaved: {output_file}")
 

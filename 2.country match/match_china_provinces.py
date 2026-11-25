@@ -1,9 +1,16 @@
+from pathlib import Path
+
 import pandas as pd
 import geopandas as gpd
 
-from paths import COUNTRY_BOUNDARIES, PROVINCE_BOUNDARIES, TABLES_DIR
 
-earthquake_only = pd.read_csv(TABLES_DIR / "earthquake_only.csv")
+STAGE_DIR = Path(__file__).resolve().parent
+CLEANED_DATA = STAGE_DIR.parent / "1.datacleaning" / "earthquake_only.csv"
+BOUNDARIES_DIR = STAGE_DIR / "boundaries"
+COUNTRY_BOUNDARIES = BOUNDARIES_DIR / "ne_50m_admin_0_countries.zip"
+PROVINCE_BOUNDARIES = BOUNDARIES_DIR / "ne_10m_admin_1_states_provinces.zip"
+
+earthquake_only = pd.read_csv(CLEANED_DATA)
 countries = gpd.read_file(COUNTRY_BOUNDARIES)
 provinces = gpd.read_file(PROVINCE_BOUNDARIES)
 
@@ -101,13 +108,13 @@ print("All China records accounted for:",
       province_counts.sum() + province_unmatched == len(china_quakes))
 
 quakes.drop(columns="geometry").to_csv(
-    TABLES_DIR / "earthquake_country_province.csv",
+    STAGE_DIR / "earthquake_country_province.csv",
     index=False,
     encoding="utf-8-sig"
 )
 
 china_quakes.drop(columns="geometry").to_csv(
-    TABLES_DIR / "earthquake_china_province.csv",
+    STAGE_DIR / "earthquake_china_province.csv",
     index=False,
     encoding="utf-8-sig"
 )

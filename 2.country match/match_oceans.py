@@ -12,11 +12,11 @@ import pandas as pd
 from shapely import area
 
 
-from paths import BOUNDARIES_DIR, TABLES_DIR
+STAGE_DIR = Path(__file__).resolve().parent
 
 BOUNDARY_VERSION = "ca96624a56bd078437bca8184e78163e5039ad19"
 BOUNDARY_NAME = "ne_50m_geography_marine_polys"
-BOUNDARY_FOLDER = BOUNDARIES_DIR / "marine"
+BOUNDARY_FOLDER = STAGE_DIR / "boundaries" / "marine"
 
 # Group Southeast Asian seas with the Pacific and Mediterranean/Baltic seas with the Atlantic.
 OCEAN_BY_BASIN = {
@@ -92,9 +92,9 @@ def select_country_unmatched(earthquakes):
 
 
 def main():
-    default_input = TABLES_DIR / "earthquake_country_province.csv"
+    default_input = STAGE_DIR / "earthquake_country_province.csv"
     if not default_input.is_file():
-        default_input = TABLES_DIR / "earthquake_country.csv"
+        default_input = STAGE_DIR / "earthquake_country.csv"
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", type=Path, default=default_input)
     args = parser.parse_args()
@@ -176,10 +176,9 @@ def main():
     if summary["earthquake_count"].sum() != len(unmatched):
         raise ValueError("The summary does not account for every country-unmatched record.")
 
-    TABLES_DIR.mkdir(parents=True, exist_ok=True)
-    unmatched.to_csv(TABLES_DIR / "earthquake_ocean.csv", index=False, encoding="utf-8-sig")
-    summary.to_csv(TABLES_DIR / "earthquake_ocean_summary.csv", index=False, encoding="utf-8-sig")
-    unresolved.to_csv(TABLES_DIR / "earthquake_ocean_unresolved.csv", index=False, encoding="utf-8-sig")
+    unmatched.to_csv(STAGE_DIR / "earthquake_ocean.csv", index=False, encoding="utf-8-sig")
+    summary.to_csv(STAGE_DIR / "earthquake_ocean_summary.csv", index=False, encoding="utf-8-sig")
+    unresolved.to_csv(STAGE_DIR / "earthquake_ocean_unresolved.csv", index=False, encoding="utf-8-sig")
 
     print(f"Input earthquake records: {len(earthquakes):,}")
     print(f"Records without a country match: {len(unmatched):,}")
