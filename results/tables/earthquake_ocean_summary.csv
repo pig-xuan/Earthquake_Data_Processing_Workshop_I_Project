@@ -1,0 +1,9 @@
+﻿ocean_name,ocean_match_status,earthquake_count
+Pacific Ocean,matched,14618
+Indian Ocean,matched,1622
+Atlantic Ocean,matched,1474
+,unmatched,421
+Southern Ocean,matched,206
+Arctic Ocean,matched,92
+,ambiguous,9
+,inland_water,9

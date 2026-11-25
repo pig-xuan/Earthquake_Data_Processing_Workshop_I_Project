@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import cartopy.crs as ccrs
 import geopandas as gpd
 import matplotlib.pyplot as plt
@@ -7,7 +5,9 @@ from matplotlib.lines import Line2D
 import pandas as pd
 
 
-PROJECT_DIR = Path(__file__).resolve().parent
+from paths import COUNTRY_BOUNDARIES, FIGURES_DIR, PROVINCE_BOUNDARIES, TABLES_DIR
+
+
 EXTENT = [70, 139, 15, 56]
 LON_LAT = ccrs.PlateCarree()
 BACKGROUND = "#091521"
@@ -23,7 +23,7 @@ DEPTH_GROUPS = [
 CREDIT = "Earthquake data: 07earthquake.csv  ·  Boundaries: Natural Earth"
 
 
-# Draw the same map extent and boundary layers in every panel.
+# Share the extent, grid and boundaries across all map panels.
 def draw_basemap(ax, countries, provinces):
     ax.set_extent(EXTENT, crs=LON_LAT)
     ax.set_facecolor(OCEAN)
@@ -45,29 +45,22 @@ def draw_basemap(ax, countries, provinces):
     grid.xlabel_style = {"color": MUTED, "size": 8}
     grid.ylabel_style = {"color": MUTED, "size": 8}
     ax.spines["geo"].set_edgecolor("#496676")
-# Conclusion: All maps share the same extent, grid and reference boundaries.
 
 
-# Plot one depth group using the same color as the world map.
+# Match the depth colors used by the global earthquake maps.
 def plot_epicenters(ax, records, color, layer, size):
     return ax.scatter(
         records["Longitude"], records["Latitude"],
         transform=LON_LAT, s=size, color=color,
         alpha=0.85, edgecolors="none", zorder=3 + layer,
     )
-# Conclusion: Color represents depth, and marker size is fixed within each figure.
 
 
-# Read the matched records and local map files, then prepare the depth groups.
 def main():
-    quakes = pd.read_csv(PROJECT_DIR / "earthquake_china_province.csv")
-    countries = gpd.read_file(
-        PROJECT_DIR / "ne_50m_admin_0_countries" / "ne_50m_admin_0_countries.shp"
-    ).to_crs("EPSG:4326")
+    quakes = pd.read_csv(TABLES_DIR / "earthquake_china_province.csv")
+    countries = gpd.read_file(COUNTRY_BOUNDARIES).to_crs("EPSG:4326")
     countries = countries.cx[EXTENT[0]:EXTENT[1], EXTENT[2]:EXTENT[3]]
-    provinces = gpd.read_file(
-        PROJECT_DIR / "ne_10m_admin_1_states_provinces.zip"
-    ).to_crs("EPSG:4326")
+    provinces = gpd.read_file(PROVINCE_BOUNDARIES).to_crs("EPSG:4326")
     provinces = provinces.loc[provinces["adm0_a3"].eq("CHN")]
 
     depth = quakes["Depth"]
@@ -82,15 +75,15 @@ def main():
 
     years = f"{quakes['year'].min()}–{quakes['year'].max()}"
     subtitle = f"{years}  ·  {len(quakes):,} events  ·  Catalog magnitude ≥{quakes['Magnitude'].min():g}"
+    # Include every depth group in the legend, even when a group has no events.
     legend_handles = [
         Line2D([], [], marker="o", linestyle="none", color=color, markersize=6, label=label)
         for _, label, color in DEPTH_GROUPS
     ]
     for (name, _, _), group in zip(DEPTH_GROUPS, groups):
         print(f"{name} records: {len(group):,}")
-    # Conclusion: All selected earthquake records have valid positions and belong to one depth group.
 
-    # Draw and save the combined map with a shared depth legend.
+    # Show all depth groups together before comparing them in separate panels.
     fig, ax = plt.subplots(
         figsize=(13, 8.7), subplot_kw={"projection": LON_LAT}, facecolor=BACKGROUND,
     )
@@ -106,12 +99,12 @@ def main():
         ncol=3, frameon=False, labelcolor=TEXT, fontsize=11,
     )
     fig.text(0.5, 0.027, CREDIT, ha="center", color=MUTED, fontsize=9)
-    output_path = PROJECT_DIR / "china_earthquake_distribution.png"
+    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+    output_path = FIGURES_DIR / "china_earthquake_distribution.png"
     fig.savefig(output_path, dpi=300, facecolor=BACKGROUND)
     print("Saved combined map:", output_path)
-    # Conclusion: The combined map shows all three depth groups together.
 
-    # Draw and save shallow, intermediate, deep and combined comparison panels.
+    # Keep depth colors consistent between the individual and combined panels.
     panel_fig, axes = plt.subplots(
         2, 2, figsize=(14.5, 10), subplot_kw={"projection": LON_LAT},
         facecolor=BACKGROUND,
@@ -139,14 +132,12 @@ def main():
         ncol=3, frameon=False, labelcolor=TEXT, fontsize=11,
     )
     panel_fig.text(0.5, 0.028, CREDIT, ha="center", color=MUTED, fontsize=9)
-    panel_path = PROJECT_DIR / "china_earthquake_depth_panels.png"
+    panel_path = FIGURES_DIR / "china_earthquake_depth_panels.png"
     panel_fig.savefig(panel_path, dpi=300, facecolor=BACKGROUND)
     print("Saved four-panel map:", panel_path)
     plt.close(fig)
     plt.close(panel_fig)
-    # Conclusion: The four panels compare the three depth groups and all records.
 
 
 if __name__ == "__main__":
     main()
-

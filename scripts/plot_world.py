@@ -1,23 +1,24 @@
-from pathlib import Path
-
+import cartopy
 import pandas as pd
 import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 
 
-# Load the earthquake table from the same folder as this script.
-project_dir = Path(__file__).resolve().parent
-data_path = project_dir / "earthquake_country.csv"
+from paths import BOUNDARIES_DIR, FIGURES_DIR, TABLES_DIR
+
+
+cartopy.config["pre_existing_data_dir"] = BOUNDARIES_DIR
+FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+data_path = TABLES_DIR / "earthquake_only.csv"
 
 quakes = pd.read_csv(data_path)
 
 print("Loaded file:", data_path)
 print("Earthquake records:", len(quakes))
-# Conclusion: The earthquake records are available for mapping.
 
 
-# Create Boolean masks for the three depth intervals.
+# Use the same depth thresholds and colors as the China maps.
 shallow = quakes["Depth"] < 70
 
 intermediate = (
@@ -34,10 +35,9 @@ print(
     "All records classified:",
     shallow.sum() + intermediate.sum() + deep.sum() == len(quakes)
 )
-# Conclusion: Each record is assigned to one of the three depth groups.
 
 
-# Create a Pacific-centered world map with a dark background.
+# Center the projection on 180 degrees to keep the Pacific continuous.
 fig = plt.figure(
     figsize=(16, 8),
     facecolor="#091521"
@@ -75,10 +75,9 @@ ax.gridlines(
     alpha=0.5,
     zorder=2
 )
-# Conclusion: The world map is centered on the Pacific Ocean.
 
 
-# Plot earthquake epicenters using a different color for each depth group.
+# Keep positions in longitude and latitude; Cartopy handles the map projection.
 ax.scatter(
     quakes.loc[shallow, "Longitude"],
     quakes.loc[shallow, "Latitude"],
@@ -114,10 +113,8 @@ ax.scatter(
     label=">=300 km",
     zorder=5
 )
-# Conclusion: Epicenter colors represent the three depth intervals.
 
 
-# Add the title and legend, then save and display the figure.
 ax.set_title(
     "Global Earthquake Epicenters | 1965-2016",
     color="#E6EDF2",
@@ -153,7 +150,7 @@ fig.subplots_adjust(
     bottom=0.14
 )
 
-output_path = project_dir / "global_earthquake_distribution.png"
+output_path = FIGURES_DIR / "global_earthquake_distribution.png"
 
 fig.savefig(
     output_path,
@@ -164,10 +161,8 @@ fig.savefig(
 
 print("Saved figure:", output_path)
 
-# Conclusion: The combined epicenter map is saved as a PNG.
 
-
-# Compare the three depth groups and all events in a shared 2-by-2 map layout.
+# Use identical map extents and styling so the depth groups can be compared.
 comparison_fig, comparison_axes = plt.subplots(
     2,
     2,
@@ -316,11 +311,9 @@ comparison_fig.text(
     color="#A8BDC9",
     fontsize=9
 )
-# Conclusion: The panels compare shallow, intermediate, deep and combined epicenters on identical maps.
 
 
-# Save the four-panel comparison as an additional high-resolution PNG and display both figures.
-comparison_output_path = project_dir / "global_earthquake_depth_panels.png"
+comparison_output_path = FIGURES_DIR / "global_earthquake_depth_panels.png"
 comparison_fig.savefig(
     comparison_output_path,
     dpi=300,
@@ -329,5 +322,5 @@ comparison_fig.savefig(
 )
 print("Saved four-panel figure:", comparison_output_path)
 
-plt.show()
-# Conclusion: Both the original combined map and the new four-panel comparison are generated.
+plt.close(fig)
+plt.close(comparison_fig)

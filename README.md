@@ -1,99 +1,75 @@
-# 07 · 地震目录清洗练习
+# 地震目录数据处理与可视化
 
-DS 2043 Data Processing Workshop I · 2026 Fall · 选题 07（地震）
+DS 2043 Data Processing Workshop I · 2026 Fall · 选题 07
 
-用课程中讲过的 NumPy / Pandas 语法，对一份 1965–2016 年的 USGS 地震目录做逐步检查和标记。
-19 个步骤线性执行，每一步都打印中间结果，并在代码注释里写明这一步得出的结论（中英双语对照）。
+项目以 1965–2016 年的 USGS 地震目录为输入，完成数据清洗、国家和中国省级区域匹配、海域分类、K-means 聚类及制图。课程 B 部分的 Notebook、扩展目录和提交材料见 [B 部分提交与复现说明](reports/part-b/B部分_提交说明.md)。
 
-**清洗原则：只加标记，不删记录，不覆盖原始测量值。**
+## 目录结构
+
+| 目录 | 内容 |
+| --- | --- |
+| [`data/`](data/) | 课程原始数据 `07earthquake.csv` 以及 Natural Earth 边界文件 |
+| [`scripts/`](scripts/) | 清洗、地理匹配、聚类和绘图脚本 |
+| [`results/tables/`](results/tables/) | 清洗后的目录、地理匹配、海域统计和聚类结果 |
+| [`results/figures/`](results/figures/) | 全球和中国震中分布图、深度分组图及聚类图 |
+| [`reports/part-b/`](reports/part-b/) | B 部分提交包、文件清单、复现说明和结果分析 |
+
+## 安装与运行
+
+使用 Python 3.13。克隆项目后，在仓库根目录安装依赖。
 
 ```bash
 git clone https://github.com/pig-xuan/Earthquake_Data_Processing_Workshop_I_Project.git
 cd Earthquake_Data_Processing_Workshop_I_Project
+python3.13 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
 ```
 
-## 快速开始
+下面的顺序可以从原始 CSV 重新生成全部结果。脚本使用相对于仓库的输入和输出路径，因此也可以在其他目录用脚本的绝对路径执行。绘图脚本直接保存 PNG。
 
 ```bash
-pip install -r requirements.txt
-python earthquake_cleaning.py
+python scripts/clean_earthquakes.py
+python scripts/match_countries.py
+python scripts/match_china_provinces.py
+python scripts/match_oceans.py
+python scripts/cluster_earthquakes.py
+python scripts/plot_world.py
+python scripts/plot_china.py
+python scripts/plot_clusters.py
 ```
 
-- **必须从仓库根目录运行**。脚本用相对路径 `data/07earthquake.csv` 读取数据，在别的目录下会直接报 `FileNotFoundError`。
-- 环境：Python ≥ 3.10，pandas ≥ 2.0（第 13 步用到 `format="mixed"`）。`requirements.txt` 锁定 `pandas==3.0.5`、`numpy==2.4.6`；在 `pandas 3.0.2` + `numpy 2.4.4` 上也验证通过。
-- 全程无网络请求、不写任何中间文件，23,412 行数据大约 1 秒跑完，屏幕上输出约 200 行日志。
-
-## 数据
-
-`data/07earthquake.csv`：**23,412 行 × 7 列，无缺失单元格**。
-
-| 列 | 类型 | 说明 |
-| --- | --- | --- |
-| `Date` | 文本 | 记录日期。23,409 行为 `MM/DD/YYYY`，3 行为完整 ISO 时间戳 |
-| `Time` | 文本 | 时刻。13,622 行为 `HH:MM:SS`，9,787 行为单位数小时 `H:MM:SS`（如 `9:35:30`），3 行与 `Date` 同为 ISO 时间戳并带毫秒 |
-| `Latitude` | 数值 | 纬度，十进制度，范围 −77.08 – 86.005 |
-| `Longitude` | 数值 | 经度，十进制度，范围 −179.997 – 179.998 |
-| `Type` | 文本 | 事件类型，4 种：`Earthquake` 23,232 / `Nuclear Explosion` 175 / `Explosion` 4 / `Rock Burst` 1 |
-| `Depth` | 数值 | 震源深度，单位 km，范围 −1.1 – 700。负值表示震源位于海平面之上，源值保留不改 |
-| `Magnitude` | 数值 | 震级，范围 5.5 – 9.1 |
-
-时间跨度为 1965-01-02 至 2016-12-30，共 52 个年份，覆盖全球。
-
-**来源**：USGS 地震目录，1965–2016 年 M ≥ 5.5 的长序列导出。需要与本目录做同期对照的 USGS 近年数据（2017 年以后）不在本仓库范围内。
-
-## 19 个步骤
-
-| 步骤 | 内容 | 首跑结论 |
-| --- | --- | --- |
-| 01–03 | 读入原始 CSV、保留独立工作副本、预览并查看数值分布 | 23,412 × 7；深度 −1.1 – 700 km |
-| 04–05 | 缺失值清点、定位负深度（只看不改） | 0 个缺失单元格；负深度 3 条 |
-| 06–07 | 按 `Type` 计数，筛选 `Earthquake` 事件并 `.copy()` | 排除 180 条非地震事件，剩 23,232 条 |
-| 08–09 | 用字符串长度找出格式异常的日期，按切片改写为 `MM/DD/YYYY` | 3 条 ISO 日期被统一 |
-| 10–11 | 找出偏长的时间文本，截取 `T` 之后、`Z` 之前的部分，保留毫秒 | 3 条被整理，毫秒未丢失 |
-| 12–13 | 日期与时间拼成 `event_time_text`，再用 `format="mixed"` 解析为 UTC 时间戳 | 解析失败 0 条，dtype 为 `datetime64[us, UTC]` |
-| 14–16 | 用 `dt` 访问器取年 / 月；按年计数并排名；`unstack()` 生成年月表 | 1965–2016 共 52 年；年度与年月合计均为 23,232，与行数自洽 |
-| 17–18 | `np.isfinite()` 逐列判断有限值；四个比较条件用 `&` 连接校验经纬度边界 | 非有限值 0；坐标越界 0 |
-| 19 | 新增三个布尔标记，不删除、不替换任何原始测量值 | 负深度 3、零深度 4、M ≥ 7 共 738 条 |
-
-第 19 步生成的标记列：
-
-| 列名 | 含义 |
+| 脚本 | 生成文件或用途 |
 | --- | --- |
-| `is_negative_depth` | `Depth < 0`，源值保留（3 条：1986-07-21 一条、1992-06-28 两条） |
-| `is_zero_depth` | `Depth == 0`，多为震源定深到海平面（4 条） |
-| `is_m7_plus` | `Magnitude >= 7`（738 条） |
+| `clean_earthquakes.py` | `earthquake_only.csv`。加 `--inspect` 可只打印前 19 步清洗检查，不写入 CSV |
+| `match_countries.py` | `earthquake_country.csv`，按国家边界匹配 |
+| `match_china_provinces.py` | `earthquake_country_province.csv` 和 `earthquake_china_province.csv` |
+| `match_oceans.py` | `earthquake_ocean.csv`、`earthquake_ocean_summary.csv` 和 `earthquake_ocean_unresolved.csv`。默认读取全球国家与省级匹配表，也可用 `--input` 指定其他匹配表 |
+| `cluster_earthquakes.py` | `earthquake_kmeans.csv`。将经纬度转成单位球面坐标，再用 NumPy 实现的 K-means 分为 6 组 |
+| `plot_world.py` | 从清洗表生成全球震中分布图和深度分组图 |
+| `plot_china.py` | 从中国省级匹配表生成中国震中分布图和深度分组图 |
+| `plot_clusters.py` | 从聚类表生成全球聚类分布和年度计数图 |
 
-## 预期输出（用于验证环境是否正常）
+主要脚本所需边界数据随仓库提供，依赖装好后可以离线运行。B 部分提交包包含独立的 Notebook 流程和 1965–2024 年扩展目录，使用的海域边界和分类口径见该提交包的说明。
 
-跑完后屏幕上的关键数字应当与下表完全一致，任意一项对不上，说明依赖版本或数据文件出了问题：
+## 数据与检查结果
 
-| 项目 | 期望值 |
-| --- | --- |
-| 原始行数 / 列数 | 23,412 / 7 |
-| 排除的非地震事件 | 180 |
-| 地震子集行数 | 23,232 |
-| 异常日期、异常时间 | 各 3 条 |
-| 日期时间解析失败 | 0 |
-| 年份范围 / 年份数 | 1965 – 2016 / 52 |
-| 年度合计、年月合计 | 均为 23,232 |
-| 非有限值 / 坐标越界 | 0 / 0 |
+原始课程 CSV 有 23,412 条记录，涵盖 1965–2016 年，字段为日期、时间、纬度、经度、事件类型、深度（km）和震级。清洗在副本上筛选 `Earthquake` 事件，统一日期时间格式，保留零基原始行号 `source_row`，并给深度和震级添加标记。原始 CSV 及经纬度、深度和震级测量值保持原样。
+
+| 检查项 | 结果 |
+| --- | ---: |
+| 原始记录 / 地震记录 | 23,412 / 23,232 |
+| 非地震事件 | 180 |
+| 格式异常的日期 / 时间文本 | 3 / 3 |
+| 时间解析失败 / 坐标越界 | 0 / 0 |
+| 年度与年月统计合计 | 均为 23,232 |
 | 负深度 / 零深度 / M ≥ 7 | 3 / 4 / 738 |
+| 匹配到国家或地区 / 未匹配 | 4,781 / 18,451 |
 
-零深度只有 4 条，是因为 170 条零深度记录里有 166 条属于 `Nuclear Explosion` 和 `Explosion`，已在第 07 步被筛掉。
+国家和省级匹配按 Natural Earth 多边形的内部进行空间连接。海域分类只处理国家匹配为空的记录，对边界重叠且海洋归属不一致的震中标记 `ambiguous`，并将未得到海洋归属的记录一并保存在待复核表中。地图深度区间为浅源（低于 70 km）、中源（70 至低于 300 km）和深源（至少 300 km）。
 
-## 本仓库不做什么
+## 结果预览
 
-以下内容不在当前脚本范围内，留给后续阶段：
+![1965–2016 年全球地震震中分布](results/figures/global_earthquake_distribution.png)
 
-- 逆地理编码与省份 / 国家归属，因此没有区域维度的统计
-- 疑似重复事件检测（同一地震被多条记录描述）
-- 与其他目录（如 USGS 近年数据）的同期比对
-- 导出清洗结果：脚本只打印，不回写 CSV，`earthquake_only` 在进程结束后即丢失
-- 任何可视化
-
-## 已知局限
-
-1. 第 08–09 步按「长度 ≠ 10 就当作 ISO 切片」修复日期，是针对本数据集的硬编码；换一批数据或出现第三种日期格式时会失效。更稳的做法是用 `str.match()` 生成掩码，配合 `pd.to_datetime(..., errors="coerce")` 兜底。
-2. 第 09、11 步用 `if value in unusual_dates` 逐行判断，若两条记录的文本恰好相同会被连带改写。本数据集中 3 条异常值互不相同，未触发；但逻辑上应改为布尔掩码。
-3. 没有断言（`assert`）也没有测试，结论只存在于注释里，需要人工比对日志。
-4. 仓库未附 LICENSE。
+[中国地震深度分组图](results/figures/china_earthquake_depth_panels.png) · [全球 K-means 聚类图](results/figures/earthquake_kmeans_visualization.png) · [海域统计表](results/tables/earthquake_ocean_summary.csv)

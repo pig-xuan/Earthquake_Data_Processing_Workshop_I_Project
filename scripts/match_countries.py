@@ -1,11 +1,11 @@
 import pandas as pd
-import numpy as np
 import geopandas as gpd
 
-countries = gpd.read_file(
-    '/Users/guxuana/Desktop/Data Processing Workshop I /earthquake/ne_50m_admin_0_countries/ne_50m_admin_0_countries.shp'
-)
-earthquake_only = pd.read_csv('/Users/guxuana/Desktop/Data Processing Workshop I /earthquake/earthquake_only.csv')
+from paths import COUNTRY_BOUNDARIES, TABLES_DIR
+
+
+countries = gpd.read_file(COUNTRY_BOUNDARIES)
+earthquake_only = pd.read_csv(TABLES_DIR / "earthquake_only.csv")
 
 print("First five records:")
 print(countries.head())
@@ -14,8 +14,8 @@ print("Column names:")
 print(countries.columns)
 
 print("Coordinate reference system:", countries.crs)
-# Conclusion: The boundary table provides country attributes and polygon geometries.
 
+# Use longitude as x and latitude as y in WGS84.
 points = gpd.points_from_xy(earthquake_only["Longitude"],earthquake_only["Latitude"])
 quake_points = gpd.GeoDataFrame(earthquake_only, geometry = points, crs = "EPSG:4326" )
 
@@ -27,12 +27,13 @@ print("Number of earthquake points:", len(quake_points))
 print()
 
 print(countries.columns)
-quakes_crs = countries.to_crs(quake_points.crs)
+# Both layers must use the same coordinate reference system for a spatial join.
+countries = countries.to_crs(quake_points.crs)
+# Keep unmatched epicenters in the left join; within excludes exact boundary points.
 quakes_with_country = gpd.sjoin(quake_points, countries[["ADMIN", "ADM0_A3", "geometry"]], how = "left", predicate = "within")
 print(quakes_with_country[["Longitude", "Latitude", "ADMIN", "ADM0_A3"]].head())
 print("Records before matching:", len(quake_points))
 print("Records after matching:", len(quakes_with_country))
-# Conclusion: Country attributes are attached to points located within country polygons.
 
 not_match = quakes_with_country["ADMIN"].isnull().sum()
 print(quakes_with_country["ADMIN"].isnull().sum())
@@ -57,10 +58,9 @@ print("Country total matches matched rows:",
       matched_total == len(matched_quakes))
 print("All records accounted for:",
       matched_total + unmatched_total == len(quake_points))
-# Conclusion: Country counts summarize matched records, with unmatched records counted separately.
 
-earthquake_country = quakes_with_country.rename(columns ={"ADMIN" : "country", "ADM0_A3": "coountry_code"})
+earthquake_country = quakes_with_country.rename(columns ={"ADMIN" : "country", "ADM0_A3": "country_code"})
 earthquake_country["country_matched_status"] = "unmatched"
-earthquake_country.loc[matched_mask, "countery_matched_status"] = "matched"
+earthquake_country.loc[matched_mask, "country_matched_status"] = "matched"
 export_data = earthquake_country.drop(columns= ["geometry", "index_right"])
-export_data.to_csv("earthquake_country.csv", index = False)
+export_data.to_csv(TABLES_DIR / "earthquake_country.csv", index=False)

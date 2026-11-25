@@ -1,33 +1,17 @@
-from pathlib import Path
-
 import pandas as pd
 import geopandas as gpd
 
-# 1. Read earthquake records and boundary files
-folder = Path("/Users/guxuana/Desktop/Data Processing Workshop I /earthquake")
+from paths import COUNTRY_BOUNDARIES, PROVINCE_BOUNDARIES, TABLES_DIR
 
-country_file = (
-    folder / "ne_50m_admin_0_countries" / "ne_50m_admin_0_countries.shp"
-)
-province_file = folder / "ne_10m_admin_1_states_provinces.zip"
-province_url = (
-    "https://naciscdn.org/naturalearth/10m/cultural/"
-    "ne_10m_admin_1_states_provinces.zip"
-)
-
-earthquake_only = pd.read_csv(folder / "earthquake_only.csv")
-countries = gpd.read_file(country_file)
-
-if province_file.exists():
-    provinces = gpd.read_file(province_file)
-else:
-    provinces = gpd.read_file(province_url)
+earthquake_only = pd.read_csv(TABLES_DIR / "earthquake_only.csv")
+countries = gpd.read_file(COUNTRY_BOUNDARIES)
+provinces = gpd.read_file(PROVINCE_BOUNDARIES)
 
 print("Country boundary CRS:", countries.crs)
 print("Province boundary CRS:", provinces.crs)
 print("Number of earthquake records:", len(earthquake_only))
 
-# 2. Convert longitude and latitude to point geometry
+# Use longitude as x and latitude as y in WGS84.
 points = gpd.points_from_xy(
     earthquake_only["Longitude"],
     earthquake_only["Latitude"]
@@ -39,7 +23,7 @@ quake_points = gpd.GeoDataFrame(
 countries = countries.to_crs(quake_points.crs)
 provinces = provinces.to_crs(quake_points.crs)
 
-# 3. Match each earthquake point to a country polygon
+# Keep country-unmatched epicenters in the table for later ocean classification.
 country_boundaries = countries[["ADMIN", "ADM0_A3", "geometry"]].rename(
     columns={"ADMIN": "country", "ADM0_A3": "country_code"}
 )
@@ -61,7 +45,7 @@ print("\nTop 10 countries by earthquake count:")
 print(quakes.groupby("country").size().sort_values(ascending=False).head(10))
 print("Country unmatched records:", quakes["country_code"].isna().sum())
 
-# 4. Select Chinese province polygons and match the CHN records
+# Match province boundaries only to records assigned to mainland China.
 china_provinces = provinces.loc[
     provinces["adm0_a3"] == "CHN", ["name", "name_zh", "geometry"]
 ].copy()
@@ -81,10 +65,10 @@ province_matches = gpd.sjoin(
 if not province_matches.index.is_unique:
     raise ValueError("Some earthquake points matched more than one province.")
 
-# Pandas aligns by row index, so each province goes back to its original record.
+# Index alignment puts each province label back on its original earthquake row.
 quakes["province"] = province_matches["province"]
 
-# 5. Include Hong Kong, Macao and Taiwan in the China province-level summary
+# Include Hong Kong, Macao and Taiwan as province-level entries in this summary.
 extra_regions = {
     "HKG": "香港特别行政区",
     "MAC": "澳门特别行政区",
@@ -103,7 +87,6 @@ quakes.loc[china_mask & quakes["province"].notna(), "province_matched_status"] =
 
 china_quakes = quakes.loc[china_mask].copy()
 
-# 6. Count records by province and check the totals
 province_counts = china_quakes.groupby("province").size().sort_values(
     ascending=False
 )
@@ -117,15 +100,14 @@ print("Province unmatched records:", province_unmatched)
 print("All China records accounted for:",
       province_counts.sum() + province_unmatched == len(china_quakes))
 
-# 7. Export results
 quakes.drop(columns="geometry").to_csv(
-    folder / "earthquake_country_province.csv",
+    TABLES_DIR / "earthquake_country_province.csv",
     index=False,
     encoding="utf-8-sig"
 )
 
 china_quakes.drop(columns="geometry").to_csv(
-    folder / "earthquake_china_province.csv",
+    TABLES_DIR / "earthquake_china_province.csv",
     index=False,
     encoding="utf-8-sig"
 )
