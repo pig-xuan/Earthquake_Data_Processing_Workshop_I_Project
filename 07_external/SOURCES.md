@@ -357,3 +357,12 @@
 2026-11-16 起，在本目录下新增 `china/`：中国地震台网正式目录（2009 年起）、CN-block 地块与 CN-faults 活动断层，以及官方地理数据包。国家地震台网整包目录因需登录未收入。
 只保存收集到的原始文件，不清洗，也不改动本文件以上已记录的 catalogs / impact / context / nbs 数据。
 详细来源、许可、抓取参数和缺口见 [`china/SOURCES.md`](china/SOURCES.md)。
+
+## 补充：USGS 2025–2026 后续检验集（catalogs/）
+
+2026-11-26 15:43（Asia/Shanghai）起，在 `catalogs/` 新增 USGS ComCat / FDSN 2025–2026 目录，作为 USGS 1965–2024 M≥5.5 主样本之后的时间后验检验集。不要并入 2017–2024 测试窗，也不要覆盖本文件以上已记录的 catalogs。
+
+- `catalogs/07_usgs_quakes_m55_2025_2026.csv`：M≥5.5 earthquake 原始目录（检验集）
+- `catalogs/07_usgs_quakes_m55_2025_2026_holdout_flags.csv`：同一批事件的区域与检验集标记
+- `catalogs/07_usgs_quakes_m5_2025_2026.csv`：同期 M≥5 earthquake 原始窗口（不是检验集定义样本）
+- 采集参数与核对计数：[`catalogs/07_usgs_m55_2025_2026_HOLDOUT.md`](catalogs/07_usgs_m55_2025_2026_HOLDOUT.md)、[`catalogs/07_usgs_m55_2025_2026_HOLDOUT.json`](catalogs/07_usgs_m55_2025_2026_HOLDOUT.json)

@@ -1,0 +1,177 @@
+{
+  "fetched_at_utc": "2026-11-26T07:43:30Z",
+  "fetched_at_asia_shanghai": "2026-11-26 15:43 Asia/Shanghai",
+  "source": "https://earthquake.usgs.gov/fdsnws/event/1/query",
+  "service": "USGS ComCat / FDSN Event API",
+  "query_params_m55": {
+    "starttime": "2025-01-01T00:00:00Z",
+    "endtime": "2026-11-26T07:43:30Z",
+    "minmagnitude": 5.5,
+    "eventtype": "earthquake",
+    "format": "csv",
+    "orderby": "time-asc"
+  },
+  "role": "later_temporal_holdout_for_USGS_1965_2024_main_sample",
+  "do_not_mix_into_2017_2024_test": true,
+  "do_not_overwrite": [
+    "07_usgs_quakes_m5_2024_now.csv",
+    "07_usgs_quakes_m55_1965_2016.csv",
+    "catalog_1965_2024_cleaned.csv",
+    "latest_cleaned.csv"
+  ],
+  "region_definitions": {
+    "china_rectangle": "70<=lon<=145 and 10<=lat<=60 inclusive; invalid coords excluded; not administrative China",
+    "pacific": "PB2002 plates shapefile, geometry make_valid, dissolve by PlateName, point.within only (no nearest fill)"
+  },
+  "depth_class": "shallow <70; intermediate 70-300 inclusive; deep >300; negative/missing excluded from those bins",
+  "sha256": {
+    "07_usgs_quakes_m55_2025_2026.csv": "a73da903fdadc825acded6eab11ba2d506ffd81485fee50f863963e339be5d19",
+    "07_usgs_quakes_m5_2025_2026.csv": "6919b14907b8e58c670075eff1c8b0fc0370e77fb5713a892d7cc8e0290eaf04",
+    "07_usgs_quakes_m55_2025_2026_holdout_flags.csv": "cc224649452406796f269015d0f071cb8f16c10a1b94ea1fa853ae58b9369f37"
+  },
+  "bytes": {
+    "07_usgs_quakes_m55_2025_2026.csv": 180177,
+    "07_usgs_quakes_m5_2025_2026.csv": 752654,
+    "07_usgs_quakes_m55_2025_2026_holdout_flags.csv": 369279
+  },
+  "m55_scope_counts": {
+    "global_m55_earthquake": {
+      "n": 949,
+      "2025": 514,
+      "2026": 435,
+      "shallow": 775,
+      "intermediate": 128,
+      "deep": 46,
+      "nonshallow_ge70": 174,
+      "depth_missing": 0,
+      "depth_negative": 0,
+      "m_ge_6": 278,
+      "m_ge_7": 29,
+      "time_min_utc": "2025-01-01 04:39:18.208000+00:00",
+      "time_max_utc": "2026-11-25 01:38:45.672000+00:00"
+    },
+    "china_rectangle": {
+      "n": 129,
+      "2025": 67,
+      "2026": 62,
+      "shallow": 110,
+      "intermediate": 12,
+      "deep": 7,
+      "nonshallow_ge70": 19,
+      "depth_missing": 0,
+      "depth_negative": 0,
+      "m_ge_6": 39,
+      "m_ge_7": 5,
+      "time_min_utc": "2025-01-07 01:05:16.734000+00:00",
+      "time_max_utc": "2026-11-21 10:45:33.230000+00:00"
+    },
+    "PB_Pacific_global_within": {
+      "n": 62,
+      "2025": 41,
+      "2026": 21,
+      "shallow": 60,
+      "intermediate": 1,
+      "deep": 1,
+      "nonshallow_ge70": 2,
+      "depth_missing": 0,
+      "depth_negative": 0,
+      "m_ge_6": 15,
+      "m_ge_7": 0,
+      "time_min_utc": "2025-01-15 21:37:01.080000+00:00",
+      "time_max_utc": "2026-11-25 01:38:45.672000+00:00"
+    },
+    "overlap": {
+      "n": 1,
+      "2025": 0,
+      "2026": 1,
+      "shallow": 1,
+      "intermediate": 0,
+      "deep": 0,
+      "nonshallow_ge70": 0,
+      "depth_missing": 0,
+      "depth_negative": 0,
+      "m_ge_6": 1,
+      "m_ge_7": 0,
+      "time_min_utc": "2026-11-06 10:39:27.869000+00:00",
+      "time_max_utc": "2026-11-06 10:39:27.869000+00:00"
+    },
+    "union": {
+      "n": 190,
+      "2025": 108,
+      "2026": 82,
+      "shallow": 169,
+      "intermediate": 13,
+      "deep": 8,
+      "nonshallow_ge70": 21,
+      "depth_missing": 0,
+      "depth_negative": 0,
+      "m_ge_6": 53,
+      "m_ge_7": 5,
+      "time_min_utc": "2025-01-07 01:05:16.734000+00:00",
+      "time_max_utc": "2026-11-25 01:38:45.672000+00:00"
+    },
+    "china_rectangle_only": {
+      "n": 128,
+      "2025": 67,
+      "2026": 61,
+      "shallow": 109,
+      "intermediate": 12,
+      "deep": 7,
+      "nonshallow_ge70": 19,
+      "depth_missing": 0,
+      "depth_negative": 0,
+      "m_ge_6": 38,
+      "m_ge_7": 5,
+      "time_min_utc": "2025-01-07 01:05:16.734000+00:00",
+      "time_max_utc": "2026-11-21 10:45:33.230000+00:00"
+    },
+    "pacific_only": {
+      "n": 61,
+      "2025": 41,
+      "2026": 20,
+      "shallow": 59,
+      "intermediate": 1,
+      "deep": 1,
+      "nonshallow_ge70": 2,
+      "depth_missing": 0,
+      "depth_negative": 0,
+      "m_ge_6": 14,
+      "m_ge_7": 0,
+      "time_min_utc": "2025-01-15 21:37:01.080000+00:00",
+      "time_max_utc": "2026-11-25 01:38:45.672000+00:00"
+    },
+    "neither": {
+      "n": 759,
+      "2025": 406,
+      "2026": 353,
+      "shallow": 606,
+      "intermediate": 115,
+      "deep": 38,
+      "nonshallow_ge70": 153,
+      "depth_missing": 0,
+      "depth_negative": 0,
+      "m_ge_6": 225,
+      "m_ge_7": 24,
+      "time_min_utc": "2025-01-01 04:39:18.208000+00:00",
+      "time_max_utc": "2026-11-24 11:06:14.036000+00:00"
+    }
+  },
+  "m5_earthquake_companion": {
+    "n": 3972,
+    "2025": 2129,
+    "2026": 1843,
+    "time_min_utc": "2025-01-01 04:39:18.208000+00:00",
+    "time_max_utc": "2026-11-26 02:09:17.972000+00:00",
+    "type": {
+      "earthquake": 3972
+    },
+    "mag_min": 5.0
+  },
+  "qc": {
+    "duplicate_ids_m55": 0,
+    "coord_invalid": 0,
+    "PB_unassigned_valid_coord": 0,
+    "PB_multiplate_within": 0,
+    "negative_depth": 0
+  }
+}
